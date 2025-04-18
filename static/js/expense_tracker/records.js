@@ -22,22 +22,35 @@ const dummyExpenses = [
     { ID: 20, Date: "2023-01-20", Category: "Education", Amount: 210 }
 ];
 
+// Function to load data into the DataTable
 function loadExpenseTable(data) {
-    const $tbody = $('#dataTable tbody');
-    $tbody.empty();
+    const tableData = data.map(item => [
+        item.ID,          // Hidden from user
+        item.Date,
+        item.Category,
+        item.Amount
+    ]);
 
-    data.forEach(item => {
-        const row = `
-            <tr>
-                <td>${item.ID}</td>
-                <td>${item.Date}</td>
-                <td>${item.Category}</td>
-                <td>${item.Amount}</td>
-            </tr>
-        `;
-        $tbody.append(row);
+    $('#dataTable').DataTable({
+        data: tableData,
+        destroy: true, // Allow reinitialization
+        columns: [
+            { title: "ID" },
+            { title: "Date" },
+            { title: "Category" },
+            { title: "Amount" }
+        ],
+        // Hiding the ID column from the user
+        columnDefs: [
+            {
+                targets: 0,
+                visible: false,
+                searchable: false
+            }
+        ]
     });
 }
+
 
 // Initialize DataTable with custom search and filter options
 
