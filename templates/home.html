@@ -1,6 +1,132 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<h1 class="h3 mb-4 text-gray-800">Home</h1>
-<!--Home page implementation go here-->
-{% endblock %}
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="keywords" content="Expense Tracker, Budgeting, Finance App">
+    <meta name="author" content="Group 6">
+
+    <title>Smart Expense Tracker - Home</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <link href="{{ url_for('static', filename='css/sb-admin-2.min.css') }}" rel="stylesheet">
+    
+
+</head>
+
+<body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                </nav>
+                <!-- End of Topbar -->
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+
+                    <!-- Hero Section -->
+                    <section class="text-center py-5 bg-primary text-white">
+                    <div class="container">
+                        <h1 class="display-4">Smart Expense Tracker & Analyzer</h1>
+                        <p class="lead">Track your spending. Analyze your habits. Save smarter.</p>
+                        <a href="{{ url_for('signup') }}" class="btn btn-light btn-lg mt-3">Get Started</a>
+                    </div>
+                    </section>
+
+                    <!-- How It Works -->
+                    <section class="py-5">
+                        <div class="container">
+                        <h2 class="mb-5 text-center">How It Works</h2>
+                        <div class="row text-center justify-content-center">
+                            <div class="col-md-2">
+                            <div class="mb-3">
+                                <i class="fas fa-user-plus fa-3x text-primary mb-2"></i>
+                            </div>
+                            <h6><a href="{{ url_for('signup') }}">Sign Up</a></h6>
+                            <p class="small">Create an account and join our platform.</p>
+                            </div>
+                    
+                            <div class="col-md-2">
+                            <div class="mb-3">
+                                <i class="fas fa-sign-in-alt fa-3x text-primary mb-2"></i>
+                            </div>
+                            <h6><a href="{{ url_for('login') }}">Log In</a></h6>
+                            <p class="small">Securely access your dashboard.</p>
+                            </div>
+                    
+                            <div class="col-md-2">
+                            <div class="mb-3">
+                                <i class="fas fa-receipt fa-3x text-primary mb-2"></i>
+                            </div>
+                            <h6><a class="text-primary">Add Expenses</a></h6>
+                            <p class="small">Log daily or monthly spending with ease.</p>
+                            </div>
+                    
+                            <div class="col-md-2">
+                            <div class="mb-3">
+                                <i class="fas fa-chart-line fa-3x text-primary mb-2"></i>
+                            </div>
+                            <h6><a class="text-primary">View Insights</a></h6>
+                            <p class="small">See spending patterns & breakdowns.</p>
+                            </div>
+                    
+                            <div class="col-md-2">
+                            <div class="mb-3">
+                                <i class="fas fa-share-alt fa-3x text-primary mb-2"></i>
+                            </div>
+                            <h6><a class="text-primary">Share Reports</a></h6>
+                            <p class="small">Easily share selected financial reports.</p>
+                            </div>
+                        </div>
+                        </div>
+                    </section>  
+
+                </div>
+                <!-- /.container-fluid -->
+
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; 2025 Smart Expense Tracker | CITS5505 | Group 6 </span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+  
+</body>
+
+</html>
