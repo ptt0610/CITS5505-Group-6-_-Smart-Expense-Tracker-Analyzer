@@ -28,7 +28,10 @@ function loadExpenseTable(data) {
         item.ID,          // Hidden from user
         item.Date,
         item.Category,
-        item.Amount
+        item.Amount,
+        `<button class="edit-btn btn-secondary" data-id="${item.ID}">Edit</button>
+        <button class="delete-btn btn-dark" data-id="${item.ID}">Delete</button>` 
+        
     ]);
 
     $('#dataTable').DataTable({
@@ -38,7 +41,8 @@ function loadExpenseTable(data) {
             { title: "ID" },
             { title: "Date" },
             { title: "Category" },
-            { title: "Amount" }
+            { title: "Amount" },
+            { title: "Update" }
         ],
         // Hiding the ID column from the user
         columnDefs: [
@@ -48,6 +52,29 @@ function loadExpenseTable(data) {
                 searchable: false
             }
         ]
+    });
+
+    // Edit functionality incoporating form fields
+    $('#dataTable tbody').off('click', '.edit-btn').on('click', '.edit-btn', function () {
+
+        const id = $(this).data('id');
+        const fullRecord = dummyExpenses.find(item => item.ID === id);
+     
+        $('#amount').val(fullRecord.Amount);
+        $('#category').val(fullRecord.Category);
+        $('#date').val(fullRecord.Date);
+    });
+
+    // Delete functionality
+    // This will be updated with an AJAX call to delete the record from the backend
+    $('#dataTable tbody').off('click', '.delete-btn').on('click', '.delete-btn', function () {
+
+        const id = $(this).data('id');
+        
+        // confirmation before deletion
+        if(!confirm('Are you sure you want to delete this record?')) {
+            return;
+        }
     });
 }
 
