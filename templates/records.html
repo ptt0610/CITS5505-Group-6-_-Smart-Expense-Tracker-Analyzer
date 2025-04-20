@@ -21,6 +21,9 @@
             <!-- Expense Entry Form -->
             <form action="{{ url_for('records') }}" method="POST">
                 <div class="form-group">
+                    <input type="hidden" id="recordId">
+                </div> 
+                <div class="form-group">
                     <label for="amount">Amount</label>
                     <input type="number" class="form-control" id="amount" name="amount" 
                         required placeholder="Enter amount $ (e.g., 25.50)">
@@ -51,7 +54,7 @@
                     <input type="date" class="form-control" id="date" name="date" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-user btn-block">Save Expense</button>
+                <button type="submit" class="btn btn-primary btn-user btn-block" id="saveBtn">Save Expense</button>
             </form>
             <hr>
             <div class="text-center">
@@ -128,6 +131,7 @@
                         <th>Date</th>
                         <th>Category</th>
                         <th>Amount</th>
+                        <th>Update</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -136,6 +140,8 @@
                         <th>Date</th>
                         <th>Category</th>
                         <th>Amount</th>
+                        <th>Update</th>
+                        
                     </tr>
                 </tfoot>
                 <tbody>
