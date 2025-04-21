@@ -22,6 +22,24 @@ const dummyExpenses = [
     { ID: 20, Date: "2023-01-20", Category: "Education", Amount: 210 }
 ];
 
+// Function to toggle the expandable expense entry pane
+function togglePane() {
+    const content = document.getElementById('expandableContent');
+    content.classList.toggle('show');
+}
+
+// Function to show the expandable expense entry pane
+function showPane() {
+    const content = document.getElementById('expandableContent');
+    content.classList.add('show');
+}
+
+// Function to hide the expandable expense entry pane
+function hidePane() {
+    const content = document.getElementById('expandableContent');
+    content.classList.remove('show');
+}
+
 // Function to load data into the DataTable
 function loadExpenseTable(data) {
     const tableData = data.map(item => [
@@ -59,10 +77,13 @@ function loadExpenseTable(data) {
 
         const id = $(this).data('id');
         const fullRecord = dummyExpenses.find(item => item.ID === id);
-     
+        
+        $('#recordId').val(fullRecord.ID);
         $('#amount').val(fullRecord.Amount);
         $('#category').val(fullRecord.Category);
         $('#date').val(fullRecord.Date);
+        showPane();
+        document.getElementById("expandableContent").scrollIntoView({ behavior: "smooth" });
     });
 
     // Delete functionality
