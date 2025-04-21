@@ -5,66 +5,75 @@
 {% block head_extra %}
 <!-- Custom styles for the table -->
 <link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/records.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <h1 class="h3 mb-4 text-gray-800">Track Your Spending</h1>
 
-<!-- Nested Row within Card Body -->
-<div class="row">
+<body>
+
+    <div class="pane-container">
+      <div class="pane-header text-primary" onclick="togglePane()">Add New Record</div>
+
+      <!-- Expandable pane for expense entry -->
+      <div class="pane-content" id="expandableContent">
+        <div class="row">      
+            <div class="col-lg-6">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Enter Your Expense</h1>
+                    </div>
+                    
+                    <!-- Fields to add new expense records-->
+                    <div class="form-group">
+                        <input type="hidden" id="recordId" name="record_id">
+                    </div> 
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" class="form-control" id="amount" name="amount" 
+                            required placeholder="Enter amount $ (e.g., 25.50)">
+                    </div>
     
-    <div class="col-lg-6">
-        <div class="p-5">
-            <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Enter Your Expense</h1>
-            </div>
-            <!-- Expense Entry Form -->
-            <form action="{{ url_for('records') }}" method="POST">
-                <div class="form-group">
-                    <input type="hidden" id="recordId">
-                </div> 
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="number" class="form-control" id="amount" name="amount" 
-                        required placeholder="Enter amount $ (e.g., 25.50)">
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select class="form-control" id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Clothing">Clothing</option>
+                            <option value="Education">Education</option>
+                            <option value="Entertainment">Entertainment</option>
+                            <option value="Food">Food</option>
+                            <option value="Groceries">Groceries</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Housing">Housing</option>
+                            <option value="Insurance">Insurance</option>
+                            <option value="Investments">Investments</option>
+                            <option value="Personal Care">Personal Care</option>
+                            <option value="Transportation">Transportation</option>
+                            <option value="Utilities">Utilities</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" required>
+                    </div>
+    
+                    <button class="btn btn-primary btn-user btn-block" id="saveBtn">Save Expense</button>
+                
+                    <hr>
+                    <div class="text-center">
+                        <a class="small" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <select class="form-control" id="category" name="category" required>
-                        <option value="">Select Category</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Education">Education</option>
-                        <option value="Entertainment">Entertainment</option>
-                        <option value="Food">Food</option>
-                        <option value="Groceries">Groceries</option>
-                        <option value="Healthcare">Healthcare</option>
-                        <option value="Housing">Housing</option>
-                        <option value="Insurance">Insurance</option>
-                        <option value="Investments">Investments</option>
-                        <option value="Personal Care">Personal Care</option>
-                        <option value="Transportation">Transportation</option>
-                        <option value="Utilities">Utilities</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="date">Date</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-user btn-block" id="saveBtn">Save Expense</button>
-            </form>
-            <hr>
-            <div class="text-center">
-                <a class="small" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
             </div>
         </div>
-    </div>
-</div>
+      </div>
+    </div>   
+  
 
-<!-- Filter Form -->
+<!-- Filter table -->
 <div class="container-fluid mb-3">
     <form class="form-row align-items-end">
         <div class="col-md-2">
@@ -151,6 +160,7 @@
         </div>
     </div>
 </div>
+</body>
 {% endblock %}
 
 {% block footer_extra %}
