@@ -40,6 +40,40 @@ function hidePane() {
     content.classList.remove('show');
 }
 
+// Function to save expense record
+// This function is called when the user clicks the save button
+function saveExpense() {
+    expenseRecord = {
+        "category" : $("#category").val(),
+        "amount" : $("#amount").val(),
+        "date" :$("#date").val() ,
+        "record_id" : $("#recordId").val()
+    }
+    $.ajax({
+        type: "POST",
+        url: "/save_records",
+        data: JSON.stringify(expenseRecord),
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result) {
+            console.log("Result:");
+            console.log(result);
+
+            alert(result.success);
+            // Clear individual fields after saving
+            $('#amount').val('');
+            $('#category').val('');
+            $('#date').val('');
+            $('#recordId').val('');
+
+            hidePane(); // Hide the pane after saving
+            // Redirect to the filter and table section
+            document.getElementById("filterCategory").scrollIntoView({ behavior: "smooth" });
+        }
+    });
+}
+
+
 // Function to load data into the DataTable
 function loadExpenseTable(data) {
     const tableData = data.map(item => [
@@ -96,6 +130,23 @@ function loadExpenseTable(data) {
         if(!confirm('Are you sure you want to delete this record?')) {
             return;
         }
+
+        $.ajax({
+            type: "POST",
+            url: "/delete_record",
+            data: JSON.stringify({ record_id: id }),
+            contentType: "application/json",
+            dataType: "json",
+            success: function(response) {
+                alert(response.success || 'Deleted!');
+                // Remove the deleted row
+                $(`#row-${id}`).remove();
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                alert("Error deleting record.");
+            }
+        });
     });
 }
 
@@ -151,4 +202,7 @@ $(document).ready(function () {
     $('#minDate, #maxDate, #minAmount, #maxAmount').on('change', function () {
         table.draw();
     });
+
+     // Trigger on change
+     $('#saveBtn').on('click', saveExpense);
 });
