@@ -101,4 +101,17 @@ $(document).ready(function () {
             shareTable.column(4).search(maxAmount).draw();  // Filtering Amount column
         });
     }
+
+    // Reset Filters
+    $('#resetFilters').click(function () {
+        // Clear filter input fields
+        $('#filterCategory').val('');
+        $('#minDate').val('');
+        $('#maxDate').val('');
+        $('#minAmount').val('');
+        $('#maxAmount').val('');
+
+        // Reset the DataTable search and column searches
+        shareTable.search('').columns().search('').draw();
+    });
 });
