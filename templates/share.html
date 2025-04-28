@@ -2,5 +2,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="h3 mb-4 text-gray-800">Share</h1>
+<h1 class="h3 mb-4 text-gray-800">Share Your Expenses</h1>
+
+<div class="container-fluid mb-3">
+
+    <!-- User selection row -->
+    <div class="form-row align-items-end mb-3">
+        <div class="col-md-4">
+            <label for="selectUser" class = "m-0 font-weight-bold text-primary ">Select User to Share With:</label>
+            <select id="selectUser" class="form-control">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
