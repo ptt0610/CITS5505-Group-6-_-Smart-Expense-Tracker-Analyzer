@@ -71,5 +71,34 @@ $(document).ready(function () {
             "pageLength": 5,  // Default to 5 entries per page
             "lengthMenu": [5, 10, 25, 50, 100]  // Dropdown for number of rows per page
         });
+        // Apply live filters (without reloading the table)
+        applyFiltersLive();
+    }
+
+    // Filters to work in real-time on DataTable
+    function applyFiltersLive() {
+        $('#filterCategory').on('input change', function () {
+            shareTable.column(3).search(this.value).draw();  // Filtering Category column
+        });
+
+        $('#minDate').on('input change', function () {
+            const minDate = this.value;
+            shareTable.column(2).search(minDate).draw();  // Filtering Date column
+        });
+
+        $('#maxDate').on('input change', function () {
+            const maxDate = this.value;
+            shareTable.column(2).search(maxDate).draw();  // Filtering Date column
+        });
+
+        $('#minAmount').on('input change', function () {
+            const minAmount = parseFloat(this.value) || 0;
+            shareTable.column(4).search(minAmount).draw();  // Filtering Amount column
+        });
+
+        $('#maxAmount').on('input change', function () {
+            const maxAmount = parseFloat(this.value) || Infinity;
+            shareTable.column(4).search(maxAmount).draw();  // Filtering Amount column
+        });
     }
 });
