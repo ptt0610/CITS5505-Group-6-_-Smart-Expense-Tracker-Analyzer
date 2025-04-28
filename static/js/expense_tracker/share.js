@@ -27,3 +27,49 @@ const dummyExpenses = [
     { ID: 19, Date: "2023-01-19", Category: "Clothing", Amount: 95 },
     { ID: 20, Date: "2023-01-20", Category: "Education", Amount: 210 }
 ];
+
+let shareTable; // Global variable for DataTable instance
+
+$(document).ready(function () {
+    // Add the default "-- Choose a User --" option
+    $('#selectUser').append('<option value="">-- Choose a User --</option>');
+
+    // Add the users to the dropdown
+    users.forEach(user => {
+        $('#selectUser').append(`<option value="${user.id}">${user.name}</option>`);
+    });
+
+    initializeShareTable(dummyExpenses);
+
+    function initializeShareTable(expenses) {
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('#shareTable')) {
+            $('#shareTable').DataTable().destroy();
+        }
+
+        const tableBody = $('#shareTable tbody');
+        tableBody.empty();
+
+        expenses.forEach(item => {
+            const row = `
+                <tr>
+                    <td><input type="checkbox" class="select-expense" data-id="${item.ID}"></td>
+                    <td>${item.ID}</td>
+                    <td>${item.Date}</td>
+                    <td>${item.Category}</td>
+                    <td>${item.Amount}</td>
+                </tr>
+            `;
+            tableBody.append(row);
+        });
+
+        // Reinitialize DataTable with pagination, search, and live filtering options
+        shareTable = $('#shareTable').DataTable({
+            "paging": true,
+            "searching": true,  // Allows searching in the table
+            "info": true,
+            "pageLength": 5,  // Default to 5 entries per page
+            "lengthMenu": [5, 10, 25, 50, 100]  // Dropdown for number of rows per page
+        });
+    }
+});

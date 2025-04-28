@@ -110,9 +110,10 @@
 {% endblock %}
 
 {% block footer_extra %}
-
 <!-- Data table plugins -->
 <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
+<!-- Load custom data to the table -->
+<script src="{{ url_for('static', filename = 'js/expense_tracker/share.js') }}"></script>
 {% endblock %}
