@@ -71,6 +71,7 @@ $(document).ready(function () {
             "pageLength": 5,  // Default to 5 entries per page
             "lengthMenu": [5, 10, 25, 50, 100]  // Dropdown for number of rows per page
         });
+
         // Apply live filters (without reloading the table)
         applyFiltersLive();
     }
@@ -114,4 +115,31 @@ $(document).ready(function () {
         // Reset the DataTable search and column searches
         shareTable.search('').columns().search('').draw();
     });
+
+    // Handle Share button click
+    $('#shareBtn').click(function () {
+        const selectedIds = [];
+
+        $('.select-expense:checked').each(function () {
+            selectedIds.push($(this).data('id'));
+        });
+
+        const selectedUser = $('#selectUser').val();
+
+        if (!selectedUser) {
+            alert('Please select a user to share with.');
+            return;
+        }
+
+        if (selectedIds.length === 0) {
+            alert('Please select at least one expense.');
+            return;
+        }
+
+        console.log('Sharing expenses:', selectedIds, 'with user:', selectedUser);
+
+        // TODO: Send selectedIds and selectedUser to the backend
+        alert(`Shared ${selectedIds.length} expenses with ${selectedUser}.`);
+    });
 });
+
