@@ -75,3 +75,9 @@ function loadSharedWithMeHistory() {
         sharedWithMeTableBody.append(row);
     });
 }
+
+// Run these functions on page load to populate the tables
+$(document).ready(function () {
+    loadMySharedHistory();
+    loadSharedWithMeHistory();
+});

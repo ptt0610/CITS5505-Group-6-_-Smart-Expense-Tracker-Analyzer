@@ -77,11 +77,11 @@
                     <span>Share</span></a>
             </li>
 
-            <!-- Nav Item - Shared with Me -->
+            <!-- Nav Item - Share History -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('shared_with_me') }}">
+                <a class="nav-link" href="{{ url_for('share_history') }}">
                     <i class="fas fa-fw fa-folder-open"></i>
-                    <span>Shared with Me</span></a>
+                    <span>Share History</span></a>
             </li>
 
             
@@ -175,10 +175,11 @@
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- Nav Item - User Information -->
+                        <!-- Nav Item - User Information -->                        
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <!-- Shold be update John Doe with logged-in user's username-->
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">John Doe</span>
                                 <img class="img-profile rounded-circle" 
                                     src="{{ url_for('static', filename='img/undraw_profile.svg') }}" alt="Profile Picture">

@@ -43,3 +43,7 @@
 </div>
 
 {% endblock %}
+
+{% block footer_extra %}
+<script src="{{ url_for('static', filename = 'js/expense_tracker/share-history.js') }}"></script>
+{% endblock %}
