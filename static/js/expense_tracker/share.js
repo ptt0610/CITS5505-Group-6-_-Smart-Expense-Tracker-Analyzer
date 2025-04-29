@@ -147,5 +147,9 @@ $(document).ready(function () {
         alert(`Shared ${selectedIds.length} expenses with ${userName}.`);
 
         // TODO: Send selectedIds and selectedUser to backend
+
+        // Clear checkboxes and reset user selection
+        $('.select-expense').prop('checked', false);
+        $('#selectUser').val('');
     });
 });
