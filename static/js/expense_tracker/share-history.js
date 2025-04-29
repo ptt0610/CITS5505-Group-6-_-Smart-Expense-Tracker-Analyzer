@@ -51,3 +51,27 @@ function loadMySharedHistory() {
         myHistoryTableBody.append(row);
     });
 }
+
+// Function to load 'Shared With Me' table
+function loadSharedWithMeHistory() {
+    const sharedWithMeTableBody = $('#sharedWithMeTable tbody');
+    sharedWithMeTableBody.empty();
+
+    sharedWithMeHistory.forEach(entry => {
+        const sharedByUserName = users.find(user => user.id === entry.sharedBy).name;
+
+        // Format expense records
+        const sharedRecords = entry.expenseRecords.map(record => 
+            `${record.category} - ${record.amount} (Date: ${record.date})`
+        ).join('<br>');
+
+        const row = `
+            <tr>
+                <td>${sharedByUserName}</td>
+                <td>${entry.date}</td>
+                <td>${sharedRecords}</td>
+            </tr>
+        `;
+        sharedWithMeTableBody.append(row);
+    });
+}
