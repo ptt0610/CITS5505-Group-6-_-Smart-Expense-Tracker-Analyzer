@@ -143,7 +143,8 @@ $(document).ready(function () {
         }
 
         console.log('Sharing expenses:', selectedIds, 'with user:', selectedUser);
-        alert(`Shared ${selectedIds.length} expenses with user ID ${selectedUser}.`);
+        const userName = users.find(user => user.id == selectedUser)?.name || 'Unknown User';
+        alert(`Shared ${selectedIds.length} expenses with ${userName}.`);
 
         // TODO: Send selectedIds and selectedUser to backend
     });
