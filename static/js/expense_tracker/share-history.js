@@ -27,3 +27,27 @@ const users = [
     { id: 2, name: "JaneSmith" }
 ];
 
+// Function to load 'My Share History' table
+// Will be reused (with minor changes) once the backend is ready and returns real data.
+function loadMySharedHistory() {
+    const myHistoryTableBody = $('#myShareHistoryTable tbody');
+    myHistoryTableBody.empty();
+
+    mySharedHistory.forEach(entry => {
+        const sharedWithUserName = users.find(user => user.id === entry.sharedWith).name;
+
+        // Format expense records
+        const sharedRecords = entry.expenseRecords.map(record => 
+            `${record.category} - ${record.amount} (Date: ${record.date})`
+        ).join('<br>');
+
+        const row = `
+            <tr>
+                <td>${sharedWithUserName}</td>
+                <td>${entry.date}</td>
+                <td>${sharedRecords}</td>
+            </tr>
+        `;
+        myHistoryTableBody.append(row);
+    });
+}
