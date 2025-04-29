@@ -1,170 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Profile</title>
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-  <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet" />
-  <link href="css/sb-admin-2.min.css" rel="stylesheet" />
-  <link href="profile.css" rel="stylesheet" />
-</head>
-<body id="page-top">
-  <div id="wrapper">
-    <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-laugh-wink"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
-      </a>
-      <hr class="sidebar-divider my-0">
-      <li class="nav-item">
-        <a class="nav-link" href="index.html">
-          <i class="fas fa-fw fa-tachometer-alt"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <hr class="sidebar-divider">
-      <div class="sidebar-heading">Interface</div>
-      <li class="nav-item active">
-        <a class="nav-link" href="profile.html">
-          <i class="fas fa-fw fa-user"></i>
-          <span>Profile</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="upload.html">
-          <i class="fas fa-fw fa-upload"></i>
-          <span>Upload Expenses</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="tables.html">
-          <i class="fas fa-fw fa-table"></i>
-          <span>Expenses Table</span>
-        </a>
-      </li>
-      <hr class="sidebar-divider d-none d-md-block">
-      <div class="text-center d-none d-md-inline">
-        <button class="rounded-circle border-0" id="sidebarToggle"></button>
-      </div>
-    </ul>
-    <!-- End of Sidebar -->
+{% extends "base.html" %}
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
-      <div id="content">
-        <!-- Topbar -->
-        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown no-arrow">
-              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">User</span>
-                <img class="img-profile rounded-circle" id="nav-profile-pic" src="img/undraw_profile.svg">
-              </a>
-              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="profile.html">
-                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i> Profile
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i> Settings
-                </a>
-                <a class="dropdown-item" href="#">
-                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i> Activity Log
-                </a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i> Logout
-                </a>
-              </div>
-            </li>
-          </ul>
-        </nav>
-        <!-- End of Topbar -->
+{% block title %}Profile - Smart Expense Tracker{% endblock %}
 
-        <!-- Begin Page Content -->
-        <div class="container-fluid">
-          <h1 class="h3 mb-4 text-gray-800">Profile Settings</h1>
-          <div class="row">
-            <!-- Form Column -->
-            <div class="col-lg-8">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
-                </div>
-                <div class="card-body">
-                  <form id="profile-form">
+{% block head_extra %}
+<!-- Custom styles for the profile page -->
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Profile Settings</h1>
+
+<div class="row">
+    <!-- Form Column -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
+            </div>
+            <div class="card-body">
+                <form id="profile-form">
                     <div class="form-group">
-                      <label for="first-name">First Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="first-name" placeholder="Enter your first name" required>
+                        <label for="first-name">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="first-name" placeholder="Enter your first name" required>
                     </div>
                     <div class="form-group">
-                      <label for="last-name">Last Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="last-name" placeholder="Enter your last name" required>
+                        <label for="last-name">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="last-name" placeholder="Enter your last name" required>
                     </div>
                     <div class="form-group">
-                      <label for="username">Username <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="username" placeholder="Choose a username" required>
+                        <label for="username">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" placeholder="Choose a username" required>
                     </div>
                     <div class="form-group">
-                      <label for="dob">Date of Birth <span class="text-danger">*</span></label>
-                      <input type="date" class="form-control" id="dob" required>
+                        <label for="dob">Date of Birth <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="dob" required>
                     </div>
                     <div class="form-group">
-                      <label for="email">Email ID <span class="text-danger">*</span></label>
-                      <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                        <label for="email">Email ID <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                      <label for="company">Company</label>
-                      <input type="text" class="form-control" id="company" placeholder="Enter company name">
+                        <label for="company">Company</label>
+                        <input type="text" class="form-control" id="company" placeholder="Enter company name">
                     </div>
                     <div class="form-group">
-                      <label for="salary">Average Monthly Salary ($)</label>
-                      <input type="number" class="form-control" id="salary" placeholder="Enter monthly average salary">
+                        <label for="salary">Average Monthly Salary ($)</label>
+                        <input type="number" class="form-control" id="salary" placeholder="Enter monthly average salary">
                     </div>
                     <div class="form-group">
-                      <label for="password">New Password <span class="text-danger">*</span></label>
-                      <input type="password" class="form-control" id="password" placeholder="Enter new password" required>
+                        <label for="password">New Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter new password" required>
                     </div>
                     <div class="form-group">
-                      <label for="confirm-password">Confirm Password <span class="text-danger">*</span></label>
-                      <input type="password" class="form-control" id="confirm-password" placeholder="Confirm new password" required>
+                        <label for="confirm-password">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm new password" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Update Profile</button>
                     <div id="confirmation" class="mt-3 text-success font-weight-bold" style="display:none;">
-                      Profile updated successfully!
+                        Profile updated successfully!
                     </div>
-                  </form>
-                  <small class="form-text text-muted mt-2">Fields marked <span class="text-danger">*</span> are required.</small>
-                </div>
-              </div>
+                </form>
+                <small class="form-text text-muted mt-2">Fields marked <span class="text-danger">*</span> are required.</small>
             </div>
-
-            <!-- Profile Picture Column -->
-            <div class="col-lg-4">
-              <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                  <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
-                </div>
-                <div class="card-body text-center">
-                  <img id="profile-preview" src="img/undraw_profile.svg" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
-                  <div class="form-group">
-                    <input type="file" id="profile-image" accept="image/*" class="form-control-file">
-                  </div>
-                  <small class="text-muted">Upload a square image for best results.</small>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        
-      </div>
     </div>
-  </div>
 
-  <!-- Script -->
-  <script src="{{ url_for('static', filename='js/expense_tracker/profile.js') }}"></script>
-</body>
-</html>
+    <!-- Profile Picture Column -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+            </div>
+            <div class="card-body text-center">
+                <img id="profile-preview" src="{{ url_for('static', filename='img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
+                <div class="form-group">
+                    <input type="file" id="profile-image" accept="image/*" class="form-control-file">
+                </div>
+                <small class="text-muted">Upload a square image for best results.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<script src="{{ url_for('static', filename='js/expense_tracker/profile.js') }}"></script>
+{% endblock %}
