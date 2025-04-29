@@ -28,13 +28,11 @@ const dummyExpenses = [
     { ID: 20, Date: "2023-01-20", Category: "Education", Amount: 210 }
 ];
 
-let shareTable; // Global variable for DataTable instance
+let shareTable; // Global DataTable instance
 
 $(document).ready(function () {
-    // Add the default "-- Choose a User --" option
+    // Populate user dropdown
     $('#selectUser').append('<option value="">-- Choose a User --</option>');
-
-    // Add the users to the dropdown
     users.forEach(user => {
         $('#selectUser').append(`<option value="${user.id}">${user.name}</option>`);
     });
@@ -42,7 +40,6 @@ $(document).ready(function () {
     initializeShareTable(dummyExpenses);
 
     function initializeShareTable(expenses) {
-        // Destroy existing DataTable if it exists
         if ($.fn.DataTable.isDataTable('#shareTable')) {
             $('#shareTable').DataTable().destroy();
         }
@@ -54,7 +51,7 @@ $(document).ready(function () {
             const row = `
                 <tr>
                     <td><input type="checkbox" class="select-expense" data-id="${item.ID}"></td>
-                    <td>${item.ID}</td>
+                    <td>${item.ID}</td> <!-- Hidden column -->
                     <td>${item.Date}</td>
                     <td>${item.Category}</td>
                     <td>${item.Amount}</td>
@@ -63,69 +60,78 @@ $(document).ready(function () {
             tableBody.append(row);
         });
 
-        // Reinitialize DataTable with pagination, search, and live filtering options
+        // Initialize DataTable with hidden ID column
         shareTable = $('#shareTable').DataTable({
-            "paging": true,
-            "searching": true,  // Allows searching in the table
-            "info": true,
-            "pageLength": 5,  // Default to 5 entries per page
-            "lengthMenu": [5, 10, 25, 50, 100]  // Dropdown for number of rows per page
+            columnDefs: [
+                {
+                    targets: 1, // Hide ID column (2nd column, index starts at 0)
+                    visible: false,
+                    searchable: false
+                }
+            ],
+            paging: true,
+            searching: true,
+            info: true,
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50, 100]
         });
-
-        // Apply live filters (without reloading the table)
+        
         applyFiltersLive();
     }
 
-    // Filters to work in real-time on DataTable
+    // Live filters
     function applyFiltersLive() {
         $('#filterCategory').on('input change', function () {
-            shareTable.column(3).search(this.value).draw();  // Filtering Category column
+            shareTable.column(3).search(this.value).draw(); // Category
         });
 
-        $('#minDate').on('input change', function () {
-            const minDate = this.value;
-            shareTable.column(2).search(minDate).draw();  // Filtering Date column
+        $('#minDate, #maxDate').on('input change', function () {
+            const minDate = $('#minDate').val();
+            const maxDate = $('#maxDate').val();
+
+            $.fn.dataTable.ext.search.push(function (settings, data) {
+                const date = data[2]; // Date column
+                if (
+                    (!minDate || date >= minDate) &&
+                    (!maxDate || date <= maxDate)
+                ) {
+                    return true;
+                }
+                return false;
+            });
+
+            shareTable.draw();
+            $.fn.dataTable.ext.search.pop(); // Clean up after filter
         });
 
-        $('#maxDate').on('input change', function () {
-            const maxDate = this.value;
-            shareTable.column(2).search(maxDate).draw();  // Filtering Date column
-        });
+        $('#minAmount, #maxAmount').on('input change', function () {
+            const minAmount = parseFloat($('#minAmount').val()) || 0;
+            const maxAmount = parseFloat($('#maxAmount').val()) || Infinity;
 
-        $('#minAmount').on('input change', function () {
-            const minAmount = parseFloat(this.value) || 0;
-            shareTable.column(4).search(minAmount).draw();  // Filtering Amount column
-        });
+            $.fn.dataTable.ext.search.push(function (settings, data) {
+                const amount = parseFloat(data[4]) || 0; // Amount column
+                return amount >= minAmount && amount <= maxAmount;
+            });
 
-        $('#maxAmount').on('input change', function () {
-            const maxAmount = parseFloat(this.value) || Infinity;
-            shareTable.column(4).search(maxAmount).draw();  // Filtering Amount column
+            shareTable.draw();
+            $.fn.dataTable.ext.search.pop();
         });
     }
 
     // Reset Filters
     $('#resetFilters').click(function () {
-        // Clear filter input fields
-        $('#filterCategory').val('');
-        $('#minDate').val('');
-        $('#maxDate').val('');
-        $('#minAmount').val('');
-        $('#maxAmount').val('');
-
-        // Reset the DataTable search and column searches
+        $('#filterCategory, #minDate, #maxDate, #minAmount, #maxAmount').val('');
         shareTable.search('').columns().search('').draw();
     });
 
-    // Handle Share button click
+    // Handle Share button
     $('#shareBtn').click(function () {
         const selectedIds = [];
-
         $('.select-expense:checked').each(function () {
             selectedIds.push($(this).data('id'));
         });
 
         const selectedUser = $('#selectUser').val();
-
         if (!selectedUser) {
             alert('Please select a user to share with.');
             return;
@@ -137,9 +143,8 @@ $(document).ready(function () {
         }
 
         console.log('Sharing expenses:', selectedIds, 'with user:', selectedUser);
+        alert(`Shared ${selectedIds.length} expenses with user ID ${selectedUser}.`);
 
-        // TODO: Send selectedIds and selectedUser to the backend
-        alert(`Shared ${selectedIds.length} expenses with ${selectedUser}.`);
+        // TODO: Send selectedIds and selectedUser to backend
     });
 });
-
