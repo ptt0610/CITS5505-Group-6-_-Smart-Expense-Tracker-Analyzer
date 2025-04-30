@@ -70,9 +70,9 @@ def delete_record():
 def share():
     return render_template('share.html')
 
-@app.route('/shared_with_me')
-def shared_with_me():
-    return render_template('shared_with_me.html')
+@app.route('/share_history')
+def share_history():
+    return render_template('share_history.html')
 
 @app.errorhandler(404)
 def page_not_found(e):
