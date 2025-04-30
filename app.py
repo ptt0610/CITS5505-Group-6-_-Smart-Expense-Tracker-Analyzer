@@ -15,6 +15,10 @@ def signup():
 def login():
     return render_template('login.html')
 
+@app.route('/forgot-password')
+def forgot_password():
+    return render_template('forgot_password.html')
+
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
