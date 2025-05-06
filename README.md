@@ -19,3 +19,4 @@ Bulding an app for Smart Expense Tracker &amp; Analyzer
 
 3. Install dependencies
     ``pip install -r requirements.txt``
+4. Run ``app.py`` and copy the IP address to a browser to run the app
