@@ -12,7 +12,7 @@ Bulding an app for Smart Expense Tracker &amp; Analyzer
     ``source venv/bin/activate``
 
     for windows users:
-    ``.\venv\Scripts\activate``
+    ``venv\Scripts\activate.bat``
 
     for powershell:
     ``venv\Scripts\Activate.ps1``
