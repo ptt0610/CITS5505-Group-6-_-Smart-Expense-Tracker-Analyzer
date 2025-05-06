@@ -3,176 +3,155 @@
 {% block title %}Expense Records{% endblock %}
 
 {% block head_extra %}
-<!-- Custom styles for the table -->
-<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
-<link href="{{ url_for('static', filename='css/records.css') }}" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/records.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
 <h1 class="h3 mb-4 text-gray-800">Track Your Spending</h1>
 
-<body>
-
-    <div class="pane-container">
-      <div class="pane-header text-primary" onclick="togglePane()">Add New Record</div>
-
-      <!-- Expandable pane for expense entry -->
-      <div class="pane-content" id="expandableContent">
-        <div class="row">      
-            <div class="col-lg-6">
-                <div class="p-5">
-                    <div class="text-center">
-                        <h1 class="h4 text-gray-900 mb-4">Enter Your Expense</h1>
-                    </div>
-                    
-                    <!-- Fields to add new expense records-->
-                    <div class="form-group">
-                        <input type="hidden" id="recordId" name="record_id">
-                    </div> 
-                    <div class="form-group">
-                        <label for="amount">Amount</label>
-                        <input type="number" class="form-control" id="amount" name="amount" 
-                            required placeholder="Enter amount $ (e.g., 25.50)">
-                    </div>
-    
-                    <div class="form-group">
-                        <label for="category">Category</label>
-                        <select class="form-control" id="category" name="category" required>
-                            <option value="">Select Category</option>
-                            <option value="Clothing">Clothing</option>
-                            <option value="Education">Education</option>
-                            <option value="Entertainment">Entertainment</option>
-                            <option value="Food">Food</option>
-                            <option value="Groceries">Groceries</option>
-                            <option value="Healthcare">Healthcare</option>
-                            <option value="Housing">Housing</option>
-                            <option value="Insurance">Insurance</option>
-                            <option value="Investments">Investments</option>
-                            <option value="Personal Care">Personal Care</option>
-                            <option value="Transportation">Transportation</option>
-                            <option value="Utilities">Utilities</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-    
-                    <div class="form-group">
-                        <label for="date">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" required>
-                    </div>
-    
-                    <button class="btn btn-primary btn-user btn-block" id="saveBtn">Save Expense</button>
-                
-                    <hr>
-                    <div class="text-center">
-                        <a class="small" href="{{ url_for('dashboard') }}">Back to Dashboard</a>
-                    </div>
-                </div>
-            </div>
+<!-- Add / Edit Pane -->
+<div class="pane-container">
+  <div class="pane-header text-primary" onclick="togglePane()">Add / Edit Record</div>
+  <div class="pane-content" id="expandableContent" style="display:none;">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="p-5">
+          <input type="hidden" id="recordId">
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" class="form-control" placeholder="e.g. 25.50" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" class="form-control" required>
+              <option value="">Select Category</option>
+              {% for cat in ["Clothing","Education","Entertainment","Food","Groceries","Healthcare","Housing","Insurance","Investments","Personal Care","Transportation","Utilities","Other"] %}
+              <option>{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" class="form-control" required>
+          </div>
+          <button id="saveBtn" class="btn btn-primary btn-block">Save Expense</button>
+          <hr>
+          <div class="text-center">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+          </div>
         </div>
       </div>
     </div>
-    
-  
-
-<!-- Filter table -->
-<div class="container-fluid mb-3">
-    <form class="form-row align-items-end">
-        <div class="col-md-2">
-            <label for="filterCategory">Category:</label>
-            <select id="filterCategory" class="form-control">
-                <option value="">All</option>
-                <option>Clothing</option>
-                <option>Education</option>
-                <option>Entertainment</option>
-                <option>Food</option>
-                <option>Groceries</option>
-                <option>Healthcare</option>
-                <option>Housing</option>
-                <option>Insurance</option>
-                <option>Investments</option>
-                <option>Personal Care</option>
-                <option>Transportation</option>
-                <option>Utilities</option>
-                <option>Other</option>
-            </select>
-        </div>
-
-        <div class="col-md-2">
-            <label for="minDate">From:</label>
-            <input type="date" id="minDate" class="form-control">
-        </div>
-
-        <div class="col-md-2">
-            <label for="maxDate">To:</label>
-            <input type="date" id="maxDate" class="form-control">
-        </div>
-
-        <div class="col-md-2">
-            <label for="minAmount">Min Amount:</label>
-            <input type="number" id="minAmount" class="form-control" placeholder="e.g., 50">
-        </div>
-
-        <div class="col-md-2">
-            <label for="maxAmount">Max Amount:</label>
-            <input type="number" id="maxAmount" class="form-control" placeholder="e.g., 200">
-        </div>
-
-        <div class="col-md-2 text-right">
-            <button type="button" id="resetFilters" class="btn btn-primary btn-block">Reset</button>
-        </div>
-    </form>
+  </div>
 </div>
 
-
-
-
-<!-- Expense Table -->
+<!-- DataTable -->
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Expense Records</h6>
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Expense Records</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table id="dataTable" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th><th>Date</th><th>Category</th><th>Amount</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
-
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Update</th>
-                    </tr>
-                </thead>
-                <tfoot>
-                    <tr>
-                        <th>ID</th>
-                        <th>Date</th>
-                        <th>Category</th>
-                        <th>Amount</th>
-                        <th>Update</th>
-                        
-                    </tr>
-                </tfoot>
-                <tbody>
-                    <!-- Replace with dynamic data from the backend -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </div>
 </div>
-</body>
 {% endblock %}
 
 {% block footer_extra %}
+  <!-- jQuery & DataTables JS -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
+  <script>
+    function togglePane() {
+      $('#expandableContent').slideToggle();
+    }
 
-<!-- Data table plugins -->
-<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
-<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    $(function(){
+      // 1. Initialize DataTable with an "actions" column
+      const table = $('#dataTable').DataTable({
+        columns: [
+          { data: 'id' },
+          { data: 'date' },
+          { data: 'category' },
+          { data: 'amount' },
+          { data: 'actions', orderable: false, searchable: false }
+        ]
+      });
 
-<!-- Load custom data to the table -->
-<script src="{{ url_for('static', filename='js/expense_tracker/records.js') }}"></script>
+      // 2. Load all records
+      function loadRecords(){
+        $.getJSON('{{ url_for("get_records") }}', function(data){
+          table.clear();
+          data.forEach(item => {
+            item.actions = `
+              <button class="btn btn-sm btn-primary edit-btn" data-id="${item.id}">Edit</button>
+              <button class="btn btn-sm btn-danger delete-btn" data-id="${item.id}">Delete</button>
+            `;
+            table.row.add(item);
+          });
+          table.draw();
+        });
+      }
+      loadRecords();
 
+      // 3. Save (create/update)
+      $('#saveBtn').on('click', function(){
+        const payload = {
+          record_id: $('#recordId').val(),
+          amount:    parseFloat($('#amount').val()),
+          category:  $('#category').val(),
+          date:      $('#date').val()
+        };
+        $.ajax({
+          url: '{{ url_for("save_records") }}',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(payload),
+          success: function(res){
+            alert(res.success);
+            $('#recordId,#amount,#category,#date').val('');
+            loadRecords();
+          }
+        });
+      });
 
+      // 4. Edit button handler
+      $('#dataTable').on('click', '.edit-btn', function(){
+        const id  = $(this).data('id');
+        const row = table.row($(this).closest('tr')).data();
+        $('#recordId').val(id);
+        $('#amount').val(row.amount);
+        $('#category').val(row.category);
+        $('#date').val(row.date);
+        if (!$('#expandableContent').is(':visible')) togglePane();
+      });
+
+      // 5. Delete button handler
+      $('#dataTable').on('click', '.delete-btn', function(){
+        if (!confirm('Delete this record?')) return;
+        $.ajax({
+          url: '{{ url_for("delete_record") }}',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ record_id: $(this).data('id') }),
+          success: function(res){
+            alert(res.success);
+            loadRecords();
+          }
+        });
+      });
+    });
+  </script>
 {% endblock %}
