@@ -1,5 +1,3 @@
-# Temporary change to force a commit
-
 import os
 from datetime import datetime
 from flask import (
@@ -14,7 +12,7 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# ─── App & Database Setup ─────────────────────────────────────────────────────
+# App & Database Setup 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -27,7 +25,7 @@ migrate = Migrate(app, db)
 login   = LoginManager(app)
 login.login_view = 'login'      # if not logged in, redirect here
 
-# ─── Models ────────────────────────────────────────────────────────────────────
+# Models 
 class User(UserMixin, db.Model):
     id            = db.Column(db.Integer, primary_key=True)
     email         = db.Column(db.String(120), unique=True, index=True, nullable=False)
@@ -57,7 +55,7 @@ class Expense(db.Model):
     def __repr__(self):
         return f'<Expense {self.id} ${self.amount}>'
 
-# ─── Page Routes ───────────────────────────────────────────────────────────────
+# Page Routes 
 @app.route('/')
 def home():
     return render_template('home.html')
@@ -96,7 +94,7 @@ def signup():
 def forgot_password():
     return render_template('forgot_password.html')
 
-# ─── UPDATED login route ───────────────────────────────────────────────────────
+#  UPDATED login route 
 @app.route('/login', methods=['GET','POST'])
 def login():
     # already logged in?
@@ -147,7 +145,7 @@ def share():
 def share_history():
     return render_template('share_history.html')
 
-# ─── AJAX / JSON APIs for Expense CRUD ─────────────────────────────────────────
+# AJAX / JSON APIs for Expense CRUD 
 @app.route('/get_records')
 @login_required
 def get_records():
@@ -195,11 +193,11 @@ def delete_record():
     db.session.commit()
     return jsonify(success='Deleted Successfully')
 
-# ─── Error Handler ────────────────────────────────────────────────────────────
+# Error Handler 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
 
-# ─── Run the App ───────────────────────────────────────────────────────────────
+# Run the App 
 if __name__ == '__main__':
     app.run(debug=True)
