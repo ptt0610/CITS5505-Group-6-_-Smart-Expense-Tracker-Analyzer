@@ -1,2 +1,6 @@
 Flask
 Jinja2
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Werkzeug
