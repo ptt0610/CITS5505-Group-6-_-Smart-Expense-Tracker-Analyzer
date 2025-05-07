@@ -1,0 +1,11 @@
+# excluse idea and vs code ide files
+.idea/
+.vscode
+
+# exclude the total db and virtual env installed libraries and files
+venv
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

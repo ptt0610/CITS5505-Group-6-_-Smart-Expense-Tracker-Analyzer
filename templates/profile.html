@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Smart Expense Tracker{% endblock %}
+
+{% block head_extra %}
+<!-- Custom styles for the profile page -->
+<link href="{{ url_for('static', filename='css/profile.css') }}" rel="stylesheet" type="text/css" />
+{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Profile Settings</h1>
+
+<div class="row">
+    <!-- Form Column -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
+            </div>
+            <div class="card-body">
+                <form id="profile-form">
+                    <div class="form-group">
+                        <label for="first-name">First Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="first-name" placeholder="Enter your first name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="last-name" placeholder="Enter your last name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" placeholder="Choose a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Date of Birth <span class="text-danger">*</span></label>
+                        <input type="date" class="form-control" id="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email ID <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" class="form-control" id="company" placeholder="Enter company name">
+                    </div>
+                    <div class="form-group">
+                        <label for="salary">Average Monthly Salary ($)</label>
+                        <input type="number" class="form-control" id="salary" placeholder="Enter monthly average salary">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">New Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm Password <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="confirm-password" placeholder="Confirm new password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                    <div id="confirmation" class="mt-3 text-success font-weight-bold" style="display:none;">
+                        Profile updated successfully!
+                    </div>
+                </form>
+                <small class="form-text text-muted mt-2">Fields marked <span class="text-danger">*</span> are required.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Picture Column -->
+    <div class="col-lg-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+            </div>
+            <div class="card-body text-center">
+                <img id="profile-preview" src="{{ url_for('static', filename='img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
+                <div class="form-group">
+                    <input type="file" id="profile-image" accept="image/*" class="form-control-file">
+                </div>
+                <small class="text-muted">Upload a square image for best results.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<script src="{{ url_for('static', filename='js/expense_tracker/profile.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block title %}Share Expenses{% endblock %}
+
+{% block head_extra %}
+<!-- Custom styles for the table -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/records.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Share Your Expenses</h1>
+
+<div class="container-fluid mb-3">
+
+    <!-- User selection row -->
+    <div class="form-row align-items-end mb-3">
+        <div class="col-md-4">
+            <label for="selectUser" class = "m-0 font-weight-bold text-primary ">Select User to Share With:</label>
+            <select id="selectUser" class="form-control">
+                <!-- Options will be populated dynamically -->
+            </select>
+        </div>
+    </div>
+
+    <!-- Filters for easy selection -->
+    <form class="form-row align-items-end">
+        <div class="col-md-2">
+            <label for="filterCategory">Category:</label>
+            <select id="filterCategory" class="form-control">
+                <option value="">All</option>
+                <option>Clothing</option>
+                <option>Education</option>
+                <option>Entertainment</option>
+                <option>Food</option>
+                <option>Groceries</option>
+                <option>Healthcare</option>
+                <option>Housing</option>
+                <option>Insurance</option>
+                <option>Investments</option>
+                <option>Personal Care</option>
+                <option>Transportation</option>
+                <option>Utilities</option>
+                <option>Other</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="minDate">From:</label>
+            <input type="date" id="minDate" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <label for="maxDate">To:</label>
+            <input type="date" id="maxDate" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <label for="minAmount">Min Amount:</label>
+            <input type="number" id="minAmount" class="form-control" placeholder="e.g., 50">
+        </div>
+
+        <div class="col-md-2">
+            <label for="maxAmount">Max Amount:</label>
+            <input type="number" id="maxAmount" class="form-control" placeholder="e.g., 200">
+        </div>
+
+        <div class="col-md-2 text-right">
+            <button type="button" id="resetFilters" class="btn btn-primary btn-block">Reset</button>
+        </div>
+    </form>
+</div>
+
+<!-- Expense Table for record selection -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Select Expenses to Share</h6>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="shareTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Select</th> <!-- new checkbox column -->
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Select</th>
+                        <th>ID</th>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </tfoot>
+                <tbody>
+                    <!-- Filled dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <button id="shareBtn" class="btn btn-primary">Share Selected</button>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+<!-- Data table plugins -->
+<script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- Load custom data to the table -->
+<script src="{{ url_for('static', filename = 'js/expense_tracker/share.js') }}"></script>
+{% endblock %}

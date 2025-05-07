@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Expense Records{% endblock %}
+
+{% block head_extra %}
+  <!-- DataTables CSS -->
+  <link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/records.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4 text-gray-800">Track Your Spending</h1>
+
+<!-- Add / Edit Pane -->
+<div class="pane-container">
+  <div class="pane-header text-primary" onclick="togglePane()">Add / Edit Record</div>
+  <div class="pane-content" id="expandableContent" style="display:none;">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="p-5">
+          <input type="hidden" id="recordId">
+          <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" id="amount" class="form-control" placeholder="e.g. 25.50" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" class="form-control" required>
+              <option value="">Select Category</option>
+              {% for cat in ["Clothing","Education","Entertainment","Food","Groceries","Healthcare","Housing","Insurance","Investments","Personal Care","Transportation","Utilities","Other"] %}
+              <option>{{ cat }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" class="form-control" required>
+          </div>
+          <button id="saveBtn" class="btn btn-primary btn-block">Save Expense</button>
+          <hr>
+          <div class="text-center">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DataTable -->
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Expense Records</h6>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table id="dataTable" class="table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th><th>Date</th><th>Category</th><th>Amount</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block footer_extra %}
+  <!-- jQuery & DataTables JS -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+
+  <script>
+    function togglePane() {
+      $('#expandableContent').slideToggle();
+    }
+
+    $(function(){
+      // 1. Initialize DataTable with an "actions" column
+      const table = $('#dataTable').DataTable({
+        columns: [
+          { data: 'id' },
+          { data: 'date' },
+          { data: 'category' },
+          { data: 'amount' },
+          { data: 'actions', orderable: false, searchable: false }
+        ]
+      });
+
+      // 2. Load all records
+      function loadRecords(){
+        $.getJSON('{{ url_for("get_records") }}', function(data){
+          table.clear();
+          data.forEach(item => {
+            item.actions = `
+              <button class="btn btn-sm btn-primary edit-btn" data-id="${item.id}">Edit</button>
+              <button class="btn btn-sm btn-danger delete-btn" data-id="${item.id}">Delete</button>
+            `;
+            table.row.add(item);
+          });
+          table.draw();
+        });
+      }
+      loadRecords();
+
+      // 3. Save (create/update)
+      $('#saveBtn').on('click', function(){
+        const payload = {
+          record_id: $('#recordId').val(),
+          amount:    parseFloat($('#amount').val()),
+          category:  $('#category').val(),
+          date:      $('#date').val()
+        };
+        $.ajax({
+          url: '{{ url_for("save_records") }}',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(payload),
+          success: function(res){
+            alert(res.success);
+            $('#recordId,#amount,#category,#date').val('');
+            loadRecords();
+          }
+        });
+      });
+
+      // 4. Edit button handler
+      $('#dataTable').on('click', '.edit-btn', function(){
+        const id  = $(this).data('id');
+        const row = table.row($(this).closest('tr')).data();
+        $('#recordId').val(id);
+        $('#amount').val(row.amount);
+        $('#category').val(row.category);
+        $('#date').val(row.date);
+        if (!$('#expandableContent').is(':visible')) togglePane();
+      });
+
+      // 5. Delete button handler
+      $('#dataTable').on('click', '.delete-btn', function(){
+        if (!confirm('Delete this record?')) return;
+        $.ajax({
+          url: '{{ url_for("delete_record") }}',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({ record_id: $(this).data('id') }),
+          success: function(res){
+            alert(res.success);
+            loadRecords();
+          }
+        });
+      });
+    });
+  </script>
+{% endblock %}
