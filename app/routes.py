@@ -6,6 +6,7 @@ from app.models import User, Expense, SharedExpense
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy import func, extract
+from collections import defaultdict
 
 # Allowed file extensions for profile pictures
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -299,6 +300,17 @@ def dashboard():
     monthly_labels = [f"{int(m.year)}-{int(m.month):02d}" for m in monthly_data]
     monthly_spending = [float(m.total) for m in monthly_data]
 
+    # Daily trend data
+    daily_trend = defaultdict(float)
+    for expense in expenses:
+        day_key = expense.date.strftime('%Y-%m-%d')  # e.g., "2025-05-11"
+        daily_trend[day_key] += expense.amount
+
+    # Sort by date
+    sorted_days = sorted(daily_trend.keys())
+    daily_labels = sorted_days
+    daily_totals = [daily_trend[day] for day in sorted_days]
+
     return render_template(
         'dashboard.html',
         categories=categories,
@@ -308,7 +320,9 @@ def dashboard():
         top_category=top_category or "None",
         num_transactions=num_transactions,
         monthly_labels=monthly_labels,
-        monthly_spending=monthly_spending
+        monthly_spending=monthly_spending,
+        daily_labels=daily_labels,
+        daily_totals=daily_totals
     )
 
 @app.route('/records')

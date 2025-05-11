@@ -98,7 +98,7 @@
     <div class="col-lg-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Monthly Spending Pattern</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Spending Trend</h6>
             </div>
             <div class="card-body">
                 <canvas id="monthlyLineChart"></canvas>
@@ -117,6 +117,8 @@
     // Embed Jinja data into global JS variables
     window.categories = {{ categories | tojson }};
     window.spending_by_category = {{ spending_by_category | tojson }};
+    window.daily_labels = {{ daily_labels|tojson }};
+    window.daily_totals = {{ daily_totals|tojson }};
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
