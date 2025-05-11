@@ -25,4 +25,7 @@ Bulding an app for Smart Expense Tracker &amp; Analyzer
    - ``flask db init``
    - ``flask db migrate -m "Recreate migration for User, Expense, SharedExpense"``
    - ``flask db upgrade``
+6. You can use Sqlite Studio to view app.db and check all data with:
+   ``SELECT * from user;``
+   ``SELECT * from expense;`` 
    
