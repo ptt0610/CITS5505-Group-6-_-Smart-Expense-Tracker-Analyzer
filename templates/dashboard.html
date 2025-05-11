@@ -112,40 +112,17 @@
 {% block footer_extra %}
 <!-- Include relevant library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="{{ url_for('static', filename='js/expense_tracker/dashboard.js') }}"></script>
 
 <script>
-    // Prepare data for charts
-    var categories = {{ categories | tojson }};
-    var spending_by_category = {{ spending_by_category | tojson }};
-    
-    // Bar Chart
-    var ctxBar = document.getElementById('categoryBarChart').getContext('2d');
-    var categoryBarChart = new Chart(ctxBar, {
-        type: 'bar',
-        data: {
-            labels: categories,
-            datasets: [{
-                label: 'Spending by Category',
-                data: spending_by_category,
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        }
-    });
-
-    // Pie Chart
-    var ctxPie = document.getElementById('categoryPieChart').getContext('2d');
-    var categoryPieChart = new Chart(ctxPie, {
-        type: 'pie',
-        data: {
-            labels: categories,
-            datasets: [{
-                data: spending_by_category,
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF0000', '#00FF00', '#0000FF', '#FFFF00'],
-            }]
-        }
-    });
+    // Embed Jinja data into global JS variables
+    window.categories = {{ categories | tojson }};
+    window.spending_by_category = {{ spending_by_category | tojson }};
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
+
+<script src="{{ url_for('static', filename='js/expense_tracker/dashboard.js') }}"></script>
+
 {% endblock %}
