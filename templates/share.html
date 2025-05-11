@@ -16,8 +16,9 @@
     <!-- User selection row -->
     <div class="form-row align-items-end mb-3">
         <div class="col-md-4">
-            <label for="selectUser" class = "m-0 font-weight-bold text-primary ">Select User to Share With:</label>
+            <label for="selectUser" class="m-0 font-weight-bold text-primary">Select User to Share With:</label>
             <select id="selectUser" class="form-control">
+                <option value="">-- Choose a User --</option>
                 <!-- Options will be populated dynamically -->
             </select>
         </div>
@@ -29,19 +30,9 @@
             <label for="filterCategory">Category:</label>
             <select id="filterCategory" class="form-control">
                 <option value="">All</option>
-                <option>Clothing</option>
-                <option>Education</option>
-                <option>Entertainment</option>
-                <option>Food</option>
-                <option>Groceries</option>
-                <option>Healthcare</option>
-                <option>Housing</option>
-                <option>Insurance</option>
-                <option>Investments</option>
-                <option>Personal Care</option>
-                <option>Transportation</option>
-                <option>Utilities</option>
-                <option>Other</option>
+                {% for category in categories %}
+                    <option value="{{ category }}">{{ category }}</option>
+                {% endfor %}
             </select>
         </div>
 
@@ -82,7 +73,7 @@
             <table class="table table-bordered" id="shareTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Select</th> <!-- new checkbox column -->
+                        <th>Select</th>
                         <th>ID</th>
                         <th>Date</th>
                         <th>Category</th>
@@ -115,5 +106,5 @@
 <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
 
 <!-- Load custom data to the table -->
-<script src="{{ url_for('static', filename = 'js/expense_tracker/share.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expense_tracker/share.js') }}"></script>
 {% endblock %}
