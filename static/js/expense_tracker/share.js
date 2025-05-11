@@ -1,43 +1,51 @@
-// Dummy users for example 
-const users = [
-    { id: 1, name: "JohnDoe" },
-    { id: 2, name: "JaneSmith" }
-];
-
-// Dummy data for frontend testing - to be replaced with real backend data
-const dummyExpenses = [
-    { ID: 1, Date: "2023-01-01", Category: "Food", Amount: 63 },
-    { ID: 2, Date: "2023-01-02", Category: "Transportation", Amount: 30 },
-    { ID: 3, Date: "2023-01-03", Category: "Entertainment", Amount: 45 },
-    { ID: 4, Date: "2023-01-04", Category: "Utilities", Amount: 75 },
-    { ID: 5, Date: "2023-01-05", Category: "Groceries", Amount: 120 },
-    { ID: 6, Date: "2023-01-06", Category: "Clothing", Amount: 85 },
-    { ID: 7, Date: "2023-01-07", Category: "Education", Amount: 200 },
-    { ID: 8, Date: "2023-01-08", Category: "Healthcare", Amount: 150 },
-    { ID: 9, Date: "2023-01-09", Category: "Housing", Amount: 950 },
-    { ID: 10, Date: "2023-01-10", Category: "Insurance", Amount: 110 },
-    { ID: 11, Date: "2023-01-11", Category: "Investments", Amount: 300 },
-    { ID: 12, Date: "2023-01-12", Category: "Personal Care", Amount: 40 },
-    { ID: 13, Date: "2023-01-13", Category: "Other", Amount: 25 },
-    { ID: 14, Date: "2023-01-14", Category: "Food", Amount: 70 },
-    { ID: 15, Date: "2023-01-15", Category: "Transportation", Amount: 45 },
-    { ID: 16, Date: "2023-01-16", Category: "Entertainment", Amount: 60 },
-    { ID: 17, Date: "2023-01-17", Category: "Utilities", Amount: 80 },
-    { ID: 18, Date: "2023-01-18", Category: "Groceries", Amount: 130 },
-    { ID: 19, Date: "2023-01-19", Category: "Clothing", Amount: 95 },
-    { ID: 20, Date: "2023-01-20", Category: "Education", Amount: 210 }
-];
-
 let shareTable; // Global DataTable instance
 
 $(document).ready(function () {
     // Populate user dropdown
-    $('#selectUser').append('<option value="">-- Choose a User --</option>');
-    users.forEach(user => {
-        $('#selectUser').append(`<option value="${user.id}">${user.name}</option>`);
-    });
+    fetch('/get_users')
+        .then(response => response.json())
+        .then(users => {
+            const selectUser = $('#selectUser');
+            selectUser.append('<option value="">-- Choose a User --</option>');
+            users.forEach(user => {
+                selectUser.append(`<option value="${user.id}">${user.name}</option>`);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching users:', error);
+            alert('Failed to load users.');
+        });
 
-    initializeShareTable(dummyExpenses);
+    // Initialize table with expenses
+    loadExpenses();
+
+    function loadExpenses() {
+        // Get filter values
+        const category = $('#filterCategory').val();
+        const minDate = $('#minDate').val();
+        const maxDate = $('#maxDate').val();
+        const minAmount = $('#minAmount').val();
+        const maxAmount = $('#maxAmount').val();
+
+        // Build query string
+        const params = new URLSearchParams();
+        if (category) params.append('category', category);
+        if (minDate) params.append('min_date', minDate);
+        if (maxDate) params.append('max_date', maxDate);
+        if (minAmount) params.append('min_amount', minAmount);
+        if (maxAmount) params.append('max_amount', maxAmount);
+
+        // Fetch expenses
+        fetch('/get_shareable_expenses?' + params.toString())
+            .then(response => response.json())
+            .then(expenses => {
+                initializeShareTable(expenses);
+            })
+            .catch(error => {
+                console.error('Error fetching expenses:', error);
+                alert('Failed to load expenses.');
+            });
+    }
 
     function initializeShareTable(expenses) {
         if ($.fn.DataTable.isDataTable('#shareTable')) {
@@ -50,11 +58,11 @@ $(document).ready(function () {
         expenses.forEach(item => {
             const row = `
                 <tr>
-                    <td><input type="checkbox" class="select-expense" data-id="${item.ID}"></td>
-                    <td>${item.ID}</td> <!-- Hidden column -->
-                    <td>${item.Date}</td>
-                    <td>${item.Category}</td>
-                    <td>${item.Amount}</td>
+                    <td><input type="checkbox" class="select-expense" data-id="${item.id}"></td>
+                    <td>${item.id}</td>
+                    <td>${item.date}</td>
+                    <td>${item.category}</td>
+                    <td>${item.amount}</td>
                 </tr>
             `;
             tableBody.append(row);
@@ -64,7 +72,7 @@ $(document).ready(function () {
         shareTable = $('#shareTable').DataTable({
             columnDefs: [
                 {
-                    targets: 1, // Hide ID column (2nd column, index starts at 0)
+                    targets: 1,
                     visible: false,
                     searchable: false
                 }
@@ -75,53 +83,17 @@ $(document).ready(function () {
             pageLength: 5,
             lengthMenu: [5, 10, 25, 50, 100]
         });
-        
-        applyFiltersLive();
     }
 
-    // Live filters
-    function applyFiltersLive() {
-        $('#filterCategory').on('input change', function () {
-            shareTable.column(3).search(this.value).draw(); // Category
-        });
-
-        $('#minDate, #maxDate').on('input change', function () {
-            const minDate = $('#minDate').val();
-            const maxDate = $('#maxDate').val();
-
-            $.fn.dataTable.ext.search.push(function (settings, data) {
-                const date = data[2]; // Date column
-                if (
-                    (!minDate || date >= minDate) &&
-                    (!maxDate || date <= maxDate)
-                ) {
-                    return true;
-                }
-                return false;
-            });
-
-            shareTable.draw();
-            $.fn.dataTable.ext.search.pop(); // Clean up after filter
-        });
-
-        $('#minAmount, #maxAmount').on('input change', function () {
-            const minAmount = parseFloat($('#minAmount').val()) || 0;
-            const maxAmount = parseFloat($('#maxAmount').val()) || Infinity;
-
-            $.fn.dataTable.ext.search.push(function (settings, data) {
-                const amount = parseFloat(data[4]) || 0; // Amount column
-                return amount >= minAmount && amount <= maxAmount;
-            });
-
-            shareTable.draw();
-            $.fn.dataTable.ext.search.pop();
-        });
-    }
+    // Apply filters on input change
+    $('#filterCategory, #minDate, #maxDate, #minAmount, #maxAmount').on('change input', function () {
+        loadExpenses();
+    });
 
     // Reset Filters
     $('#resetFilters').click(function () {
         $('#filterCategory, #minDate, #maxDate, #minAmount, #maxAmount').val('');
-        shareTable.search('').columns().search('').draw();
+        loadExpenses();
     });
 
     // Handle Share button
@@ -142,14 +114,29 @@ $(document).ready(function () {
             return;
         }
 
-        console.log('Sharing expenses:', selectedIds, 'with user:', selectedUser);
-        const userName = users.find(user => user.id == selectedUser)?.name || 'Unknown User';
-        alert(`Shared ${selectedIds.length} expenses with ${userName}.`);
-
-        // TODO: Send selectedIds and selectedUser to backend
-
-        // Clear checkboxes and reset user selection
-        $('.select-expense').prop('checked', false);
-        $('#selectUser').val('');
+        // Send sharing request
+        fetch('/share_expenses', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                recipient_id: selectedUser,
+                expense_ids: selectedIds
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.success);
+                    $('.select-expense').prop('checked', false);
+                    $('#selectUser').val('');
+                    loadExpenses();
+                } else {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error sharing expenses:', error);
+                alert('Failed to share expenses.');
+            });
     });
 });
