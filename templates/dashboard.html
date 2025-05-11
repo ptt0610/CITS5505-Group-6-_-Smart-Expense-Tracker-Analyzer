@@ -40,7 +40,7 @@
         <div class="card border-left-primary shadow h-100 py-2">
             <div class="card-body">
                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Spending</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalSpending">$0</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalSpending">${{ total_spending }}</div>
             </div>
         </div>
     </div>
@@ -48,7 +48,7 @@
         <div class="card border-left-success shadow h-100 py-2">
             <div class="card-body">
                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Avg. Spending</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="avgSpending">$0</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="avgSpending">${{ avg_spending }}</div>
             </div>
         </div>
     </div>
@@ -56,7 +56,7 @@
         <div class="card border-left-info shadow h-100 py-2">
             <div class="card-body">
                 <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Top Category</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="topCategory">N/A</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="topCategory">{{ top_category }}</div>
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
         <div class="card border-left-warning shadow h-100 py-2">
             <div class="card-body">
                 <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Transactions</div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" id="numTransactions">0</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" id="numTransactions">{{ num_transactions }}</div>
             </div>
         </div>
     </div>
@@ -113,5 +113,39 @@
 <!-- Include relevant library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ url_for('static', filename='js/expense_tracker/dashboard.js') }}"></script>
-{% endblock %}
 
+<script>
+    // Prepare data for charts
+    var categories = {{ categories | tojson }};
+    var spending_by_category = {{ spending_by_category | tojson }};
+    
+    // Bar Chart
+    var ctxBar = document.getElementById('categoryBarChart').getContext('2d');
+    var categoryBarChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Spending by Category',
+                data: spending_by_category,
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        }
+    });
+
+    // Pie Chart
+    var ctxPie = document.getElementById('categoryPieChart').getContext('2d');
+    var categoryPieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: spending_by_category,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF0000', '#00FF00', '#0000FF', '#FFFF00'],
+            }]
+        }
+    });
+</script>
+{% endblock %}
