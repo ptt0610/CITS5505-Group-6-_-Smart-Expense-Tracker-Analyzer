@@ -1,69 +1,37 @@
-function applyFilters() {
-    const filteredData = {
-        total: 1200,
-        average: 312.5,
-        topCategory: 'Food',
-        transactions: 20,
-        categoryBarChart: {
-            labels: ['Food', 'Transport', 'Health'],
-            values: [480, 300, 420]
-        },
-        pieData: {
-            labels: ['Food', 'Transport', 'Health'],
-            values: [40, 25, 35]
-        },
-        lineData: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr'],
-            values: [200, 350, 400, 300]
-        }
-    };
-
-    document.getElementById('totalSpending').innerText = `$${filteredData.total}`;
-    document.getElementById('avgSpending').innerText = `$${filteredData.average}`;
-    document.getElementById('topCategory').innerText = filteredData.topCategory;
-    document.getElementById('numTransactions').innerText = filteredData.transactions;
-
-    // Update Category Bar Chart
-    window.categoryBarChart.data.labels = filteredData.categoryBarChart.labels;
-    window.categoryBarChart.data.datasets[0].data = filteredData.categoryBarChart.values;
-    window.categoryBarChart.update();
-
-    // Update Pie Chart
-    window.categoryPieChart.data.labels = filteredData.pieData.labels;
-    window.categoryPieChart.data.datasets[0].data = filteredData.pieData.values;
-    window.categoryPieChart.update();
-
-    // Update Line Chart
-    window.monthlyLineChart.data.labels = filteredData.lineData.labels;
-    window.monthlyLineChart.data.datasets[0].data = filteredData.lineData.values;
-    window.monthlyLineChart.update();
-}
-
-
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialize charts
+    // Initialize charts with server-provided data
+    const categories = window.categories || [];
+    const spending_by_category = window.spending_by_category || [];
+    const monthly_labels = window.monthly_labels || [];
+    const monthly_spending = window.monthly_spending || [];
+
     const categoryBarChart = new Chart(document.getElementById('categoryBarChart'), {
         type: 'bar',
         data: {
-            labels: [],
+            labels: categories,
             datasets: [{
                 label: 'Categorical Spending ($)',
-                data: [],
-                backgroundColor: 'rgba(78, 115, 223, 0.5)'
+                data: spending_by_category,
+                backgroundColor: 'rgba(78, 115, 223, 0.5)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } }
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true }
+            }
         }
     });
 
     const categoryPieChart = new Chart(document.getElementById('categoryPieChart'), {
         type: 'pie',
         data: {
-            labels: [],
+            labels: categories,
             datasets: [{
-                data: [],
+                data: spending_by_category,
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
             }]
         },
@@ -73,12 +41,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const monthlyLineChart = new Chart(document.getElementById('monthlyLineChart'), {
         type: 'line',
         data: {
-            labels: [],
+            labels: monthly_labels,
             datasets: [{
                 label: 'Monthly Spend',
-                data: [],
+                data: monthly_spending,
                 fill: false,
-                borderColor: '#4e73df'
+                borderColor: '#4e73df',
+                tension: 0.1
             }]
         },
         options: {
@@ -90,11 +59,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Store charts globally so applyFilters can access them
+    // Store charts globally
     window.categoryBarChart = categoryBarChart;
     window.categoryPieChart = categoryPieChart;
     window.monthlyLineChart = monthlyLineChart;
-
-    // Run filters to populate data
-    applyFilters();
 });
+
+function applyFilters() {
+    // Get filter values
+    const category = document.getElementById('categoryFilter').value;
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+
+    // Build query string
+    const params = new URLSearchParams();
+    if (category && category !== 'All') params.append('category', category);
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+
+    // Fetch filtered data
+    fetch('/dashboard?' + params.toString())
+        .then(response => response.text())
+        .then(html => {
+            // Parse HTML to extract data
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const script = doc.querySelector('script:not([src])');
+            if (script) {
+                // Extract data from script
+                const scriptContent = script.textContent;
+                const dataMatch = scriptContent.match(/var categories = (.*?);[\s\S]*?var spending_by_category = (.*?);[\s\S]*?var monthly_labels = (.*?);[\s\S]*?var monthly_spending = (.*?);/);
+                if (dataMatch) {
+                    const categories = JSON.parse(dataMatch[1]);
+                    const spending_by_category = JSON.parse(dataMatch[2]);
+                    const monthly_labels = JSON.parse(dataMatch[3]);
+                    const monthly_spending = JSON.parse(dataMatch[4]);
+
+                    // Update KPIs
+                    document.getElementById('totalSpending').innerText = `$${doc.getElementById('totalSpending').innerText.replace('$', '')}`;
+                    document.getElementById('avgSpending').innerText = `$${doc.getElementById('avgSpending').innerText.replace('$', '')}`;
+                    document.getElementById('topCategory').innerText = doc.getElementById('topCategory').innerText;
+                    document.getElementById('numTransactions').innerText = doc.getElementById('numTransactions').innerText;
+
+                    // Update Bar Chart
+                    window.categoryBarChart.data.labels = categories;
+                    window.categoryBarChart.data.datasets[0].data = spending_by_category;
+                    window.categoryBarChart.update();
+
+                    // Update Pie Chart
+                    window.categoryPieChart.data.labels = categories;
+                    window.categoryPieChart.data.datasets[0].data = spending_by_category;
+                    window.categoryPieChart.update();
+
+                    // Update Line Chart
+                    window.monthlyLineChart.data.labels = monthly_labels;
+                    window.monthlyLineChart.data.datasets[0].data = monthly_spending;
+                    window.monthlyLineChart.update();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching filtered data:', error);
+            alert('Failed to apply filters. Please try again.');
+        });
+}
