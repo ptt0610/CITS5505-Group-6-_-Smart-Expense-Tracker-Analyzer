@@ -255,12 +255,19 @@ def dashboard():
         query = query.filter(Expense.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
     # Get expenses
-    expenses = query.all()
+    expenses = query.order_by(Expense.date.desc()).all()
 
     # Calculate KPIs
     total_spending = sum(e.amount for e in expenses) if expenses else 0
     num_transactions = len(expenses)
-    avg_spending = total_spending / num_transactions if num_transactions > 0 else 0
+    if expenses:
+        first_date = expenses[-1].date    # Oldest
+        last_date = expenses[0].date    # Newest
+        num_months = (last_date.year - first_date.year) * 12 + (last_date.month - first_date.month) + 1
+        avg_spending = total_spending / num_months if num_months > 0 else 0
+    else:
+        avg_spending = 0
+
 
     # Get categories and spending by category
     categories = db.session.query(Expense.category).filter_by(user_id=current_user.id).distinct().all()
