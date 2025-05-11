@@ -1,49 +1,62 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
 <h1 class="h3 mb-4 text-gray-800">Share History</h1>
 
-<!-- Shared Expense Section-->
+<!-- Shared Expense Section -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">My Shared Expenses</h6>
     </div>
-    <table id="myShareHistoryTable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Shared With</th>
-                <th>Shared Date</th>
-                <th>Shared Records</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- My shared expenses will be populated here -->
-        </tbody>
-    </table>
+    <div class="card-body">
+        <table id="myShareHistoryTable" class="table table-bordered table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Shared With</th>
+                    <th>Shared Date</th>
+                    <th>Shared Records</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- My shared expenses will be populated here -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Expenses Shared With Me Section-->
+<!-- Expenses Shared With Me Section -->
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <h6 class="m-0 font-weight-bold text-primary">Expenses Shared With Me</h6>
     </div>
-    <table id="sharedWithMeTable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Shared By</th>
-                <th>Shared Date</th>
-                <th>Shared Records</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Expenses shared with me will be populated here -->
-        </tbody>
-    </table>
+    <div class="card-body">
+        <table id="sharedWithMeTable" class="table table-bordered table-hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Shared By</th>
+                    <th>Shared Date</th>
+                    <th>Shared Records</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Expenses shared with me will be populated here -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
+<style>
+    #myShareHistoryTable ul, #sharedWithMeTable ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.9em;
+    }
+    #myShareHistoryTable td, #sharedWithMeTable td {
+        vertical-align: top;
+    }
+</style>
 {% endblock %}
 
 {% block footer_extra %}
-<script src="{{ url_for('static', filename = 'js/expense_tracker/share-history.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expense_tracker/share-history.js') }}"></script>
 {% endblock %}
