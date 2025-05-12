@@ -27,3 +27,8 @@
 .pane-content.show {
     display: block;
 }
+
+/* Hide the ID column in the table from user */
+th:first-child, td:first-child {
+    display: none;
+}
