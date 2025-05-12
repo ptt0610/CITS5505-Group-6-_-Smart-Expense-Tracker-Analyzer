@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 import os
 from sqlalchemy import func, extract
 from collections import defaultdict
+from collections import Counter
 
 # Allowed file extensions for profile pictures
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -255,12 +256,13 @@ def dashboard():
     if end_date:
         query = query.filter(Expense.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
-    # Get expenses
+    # Get expenses in decreasing order by date
     expenses = query.order_by(Expense.date.desc()).all()
 
     # Calculate KPIs
     total_spending = sum(e.amount for e in expenses) if expenses else 0
     num_transactions = len(expenses)
+    # Average spending
     if expenses:
         first_date = expenses[-1].date    # Oldest
         last_date = expenses[0].date    # Newest
@@ -269,6 +271,10 @@ def dashboard():
     else:
         avg_spending = 0
 
+    # Count transactions per category
+    category_counts = Counter(expense.category for expense in expenses)
+    # Get top 5 categories by transaction count
+    top_category_counts = category_counts.most_common(5)
 
     # Get categories and spending by category
     categories = db.session.query(Expense.category).filter_by(user_id=current_user.id).distinct().all()
@@ -320,7 +326,8 @@ def dashboard():
         top_category=top_category or "None",
         num_transactions=num_transactions,
         monthly_labels=monthly_labels,
-        monthly_spending=monthly_spending,
+        monthly_spending=monthly_spending,      
+        top_category_counts=top_category_counts,
         daily_labels=daily_labels,
         daily_totals=daily_totals
     )
