@@ -136,6 +136,11 @@
         $('#category').val(row.category);
         $('#date').val(row.date);
         if (!$('#expandableContent').is(':visible')) togglePane();
+
+        // Scroll to the Add/Edit pane
+        $('html, body').animate({
+          scrollTop: $('.pane-container').offset().top
+        }, 500);
       });
 
       // 5. Delete button handler
