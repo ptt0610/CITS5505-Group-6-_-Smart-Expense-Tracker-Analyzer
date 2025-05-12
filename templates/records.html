@@ -72,104 +72,12 @@
   <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/expense_tracker/records.js') }}"></script>
 
-  <script>
-    function togglePane() {
-      $('#expandableContent').slideToggle();
-    }
-
-    // Validate amount input for up to two decimal places
-    $('#amount').on('keyup', function() {
-        let value = $(this).val();
-        if (!/^\d+(\.\d{0,2})?$/.test(value)) {
-            $(this).val(value.slice(0, -1)); // Remove invalid characters
-        }
-    });
-
-    // Validate date input to prevent future dates
-    var today = new Date().toISOString().split('T')[0];
-    document.getElementById("date").setAttribute("max", today);
-    
-    $(function(){
-      // 1. Initialize DataTable with an "actions" column
-      const table = $('#dataTable').DataTable({
-        order: [[1, 'desc']], // Sort by the Date in descending order
-        columns: [
-          { data: 'id' },
-          { data: 'date' },
-          { data: 'category' },
-          { data: 'amount' },
-          { data: 'actions', orderable: false, searchable: false }
-        ]
-      });
-
-      // 2. Load all records
-      function loadRecords(){
-        $.getJSON('{{ url_for("get_records") }}', function(data){
-          table.clear();
-          data.forEach(item => {
-            item.actions = `
-              <button class="btn btn-sm btn-primary edit-btn" data-id="${item.id}">Edit</button>
-              <button class="btn btn-sm btn-danger delete-btn" data-id="${item.id}">Delete</button>
-            `;
-            table.row.add(item);
-          });
-          table.draw();
-        });
-      }
-      loadRecords();
-
-      // 3. Save (create/update)
-      $('#saveBtn').on('click', function(){
-        const payload = {
-          record_id: $('#recordId').val(),
-          amount:    parseFloat($('#amount').val()),
-          category:  $('#category').val(),
-          date:      $('#date').val()
-        };
-        $.ajax({
-          url: '{{ url_for("save_records") }}',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify(payload),
-          success: function(res){
-            alert(res.success);
-            $('#recordId,#amount,#category,#date').val('');
-            loadRecords();
-          }
-        });
-      });
-
-      // 4. Edit button handler
-      $('#dataTable').on('click', '.edit-btn', function(){
-        const id  = $(this).data('id');
-        const row = table.row($(this).closest('tr')).data();
-        $('#recordId').val(id);
-        $('#amount').val(row.amount);
-        $('#category').val(row.category);
-        $('#date').val(row.date);
-        if (!$('#expandableContent').is(':visible')) togglePane();
-
-        // Scroll to the Add/Edit pane
-        $('html, body').animate({
-          scrollTop: $('.pane-container').offset().top
-        }, 500);
-      });
-
-      // 5. Delete button handler
-      $('#dataTable').on('click', '.delete-btn', function(){
-        if (!confirm('Delete this record?')) return;
-        $.ajax({
-          url: '{{ url_for("delete_record") }}',
-          method: 'POST',
-          contentType: 'application/json',
-          data: JSON.stringify({ record_id: $(this).data('id') }),
-          success: function(res){
-            alert(res.success);
-            loadRecords();
-          }
-        });
-      });
-    });
-  </script>
+  <!-- Pass URLs as data attributes -->
+<script>
+  $('#dataTable').data('url', "{{ url_for('get_records') }}");
+  $('#dataTable').data('delete-url', "{{ url_for('delete_record') }}");
+  $('#saveBtn').data('url', "{{ url_for('save_records') }}");
+</script>
 {% endblock %}
