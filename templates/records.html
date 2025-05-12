@@ -47,6 +47,39 @@
   </div>
 </div>
 
+
+<!-- Filters for easy selection -->
+<form class="form-row align-items-end mb-3">
+  <div class="col-md-2">
+    <label for="filterCategory">Category:</label>
+    <select id="filterCategory" class="form-control">
+      <option value="">All</option>
+      {% for category in ["Clothing","Education","Entertainment","Food","Groceries","Healthcare","Housing","Insurance","Investments","Personal Care","Transportation","Utilities","Other"] %}
+        <option value="{{ category }}">{{ category }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label for="minDate">From:</label>
+    <input type="date" id="minDate" class="form-control">
+  </div>
+  <div class="col-md-2">
+    <label for="maxDate">To:</label>
+    <input type="date" id="maxDate" class="form-control">
+  </div>
+  <div class="col-md-2">
+    <label for="minAmount">Min Amount:</label>
+    <input type="number" id="minAmount" class="form-control" placeholder="e.g. 50">
+  </div>
+  <div class="col-md-2">
+    <label for="maxAmount">Max Amount:</label>
+    <input type="number" id="maxAmount" class="form-control" placeholder="e.g. 200">
+  </div>
+  <div class="col-md-2 text-right">
+    <button type="button" id="resetFilters" class="btn btn-primary btn-block">Reset</button>
+  </div>
+</form>
+
 <!-- DataTable -->
 <div class="card shadow mb-4">
   <div class="card-header py-3">
