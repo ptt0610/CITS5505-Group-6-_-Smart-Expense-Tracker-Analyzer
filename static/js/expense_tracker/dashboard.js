@@ -95,6 +95,9 @@ var dailyLineChart = new Chart(ctxLine, {
                 display: true,
                 text: 'Daily Expense Trend'
             },
+            legend: {
+                display: false
+            },
             tooltip: {
                 callbacks: {
                     label: function(context) {
