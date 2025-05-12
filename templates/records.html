@@ -78,6 +78,17 @@
       $('#expandableContent').slideToggle();
     }
 
+    // Validate amount input for up to two decimal places
+    $('#amount').on('keyup', function() {
+        let value = $(this).val();
+        if (!/^\d+(\.\d{0,2})?$/.test(value)) {
+            $(this).val(value.slice(0, -1)); // Remove invalid characters
+        }
+    });
+
+    // Validate date input to prevent future dates
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementById("date").setAttribute("max", today);
     $(function(){
       // 1. Initialize DataTable with an "actions" column
       const table = $('#dataTable').DataTable({
