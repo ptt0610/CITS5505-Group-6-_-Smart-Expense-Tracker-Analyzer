@@ -6,6 +6,8 @@ from app.models import User, Expense, SharedExpense
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy import func, extract
+from collections import defaultdict
+from collections import Counter
 
 # Allowed file extensions for profile pictures
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -254,13 +256,25 @@ def dashboard():
     if end_date:
         query = query.filter(Expense.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
 
-    # Get expenses
-    expenses = query.all()
+    # Get expenses in decreasing order by date
+    expenses = query.order_by(Expense.date.desc()).all()
 
     # Calculate KPIs
     total_spending = sum(e.amount for e in expenses) if expenses else 0
     num_transactions = len(expenses)
-    avg_spending = total_spending / num_transactions if num_transactions > 0 else 0
+    # Average spending
+    if expenses:
+        first_date = expenses[-1].date    # Oldest
+        last_date = expenses[0].date    # Newest
+        num_months = (last_date.year - first_date.year) * 12 + (last_date.month - first_date.month) + 1
+        avg_spending = total_spending / num_months if num_months > 0 else 0
+    else:
+        avg_spending = 0
+
+    # Count transactions per category
+    category_counts = Counter(expense.category for expense in expenses)
+    # Get top 5 categories by transaction count
+    top_category_counts = category_counts.most_common(5)
 
     # Get categories and spending by category
     categories = db.session.query(Expense.category).filter_by(user_id=current_user.id).distinct().all()
@@ -292,6 +306,17 @@ def dashboard():
     monthly_labels = [f"{int(m.year)}-{int(m.month):02d}" for m in monthly_data]
     monthly_spending = [float(m.total) for m in monthly_data]
 
+    # Daily trend data
+    daily_trend = defaultdict(float)
+    for expense in expenses:
+        day_key = expense.date.strftime('%Y-%m-%d')  # e.g., "2025-05-11"
+        daily_trend[day_key] += expense.amount
+
+    # Sort by date
+    sorted_days = sorted(daily_trend.keys())
+    daily_labels = sorted_days
+    daily_totals = [daily_trend[day] for day in sorted_days]
+
     return render_template(
         'dashboard.html',
         categories=categories,
@@ -301,7 +326,10 @@ def dashboard():
         top_category=top_category or "None",
         num_transactions=num_transactions,
         monthly_labels=monthly_labels,
-        monthly_spending=monthly_spending
+        monthly_spending=monthly_spending,      
+        top_category_counts=top_category_counts,
+        daily_labels=daily_labels,
+        daily_totals=daily_totals
     )
 
 @app.route('/records')
