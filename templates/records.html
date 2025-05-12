@@ -89,9 +89,11 @@
     // Validate date input to prevent future dates
     var today = new Date().toISOString().split('T')[0];
     document.getElementById("date").setAttribute("max", today);
+    
     $(function(){
       // 1. Initialize DataTable with an "actions" column
       const table = $('#dataTable').DataTable({
+        order: [[1, 'desc']], // Sort by the Date in descending order
         columns: [
           { data: 'id' },
           { data: 'date' },
