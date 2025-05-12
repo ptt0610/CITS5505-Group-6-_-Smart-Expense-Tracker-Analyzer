@@ -3,37 +3,6 @@
 {% block content %}
 <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
 
-<!-- Filters Section -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <label for="categoryFilter">Category:</label>
-        <select id="categoryFilter" class="form-control">
-            <option value="All">All</option>
-            <option value="Clothing">Clothing</option>
-            <option value="Education">Education</option>
-            <option value="Entertainment">Entertainment</option>
-            <option value="Food">Food</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Housing">Housing</option>
-            <option value="Insurance">Insurance</option>
-            <option value="Investments">Investments</option>
-            <option value="Personal Care">Personal Care</option>
-            <option value="Transportation">Transportation</option>
-            <option value="Utilities">Utilities</option>
-            <option value="Other">Other</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="dateRange">Date Range:</label>
-        <input type="date" id="startDate" class="form-control mb-1">
-        <input type="date" id="endDate" class="form-control">
-    </div>
-    <div class="col-md-4 d-flex align-items-end">
-        <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
-    </div>
-</div>
-
 <!-- KPI Cards -->
 <div class="row">
     <div class="col-md-3">
@@ -69,6 +38,45 @@
         </div>
     </div>
 </div>
+
+<!-- Filters Section (Single Line) -->
+<div class="row mb-4 align-items-end">
+    <!-- Category Filter -->
+    <div class="col-md-4">
+        <label for="categoryFilter">Category:</label>
+        <select id="categoryFilter" class="form-control">
+            <option value="All">All</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Education">Education</option>
+            <option value="Entertainment">Entertainment</option>
+            <option value="Food">Food</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Housing">Housing</option>
+            <option value="Insurance">Insurance</option>
+            <option value="Investments">Investments</option>
+            <option value="Personal Care">Personal Care</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Other">Other</option>
+        </select>
+    </div>
+
+    <!-- Date Range Filter -->
+    <div class="col-md-5">
+        <label>Date Range:</label>
+        <div class="d-flex">
+            <input type="date" id="startDate" class="form-control me-2">
+            <input type="date" id="endDate" class="form-control">
+        </div>
+    </div>
+
+    <!-- Apply Button -->
+    <div class="col-md-3">
+        <button class="btn btn-primary w-100" onclick="applyFilters()">Apply Filters</button>
+    </div>
+</div>
+
 
 <!-- Charts Section -->
 <div class="row mt-4">
@@ -151,5 +159,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon"></script>
 
 <script src="{{ url_for('static', filename='js/expense_tracker/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expense_tracker/categories.js') }}"></script>
 
 {% endblock %}
