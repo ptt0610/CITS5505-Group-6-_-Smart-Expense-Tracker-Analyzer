@@ -10,10 +10,22 @@ var categoryBarChart = new Chart(ctxBar, {
         datasets: [{
             label: 'Spending by Category',
             data: spending_by_category,
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            backgroundColor: [
+                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                '#9966FF', '#FF9F40', '#FF0000', '#00FF00',
+                '#0000FF', '#FFFF00',
+            ],
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
         }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
     }
 });
 
