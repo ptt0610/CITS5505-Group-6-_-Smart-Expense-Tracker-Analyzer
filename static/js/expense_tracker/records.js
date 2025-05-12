@@ -44,6 +44,9 @@ $(function () {
 
     loadRecords();
 
+    const today = new Date().toISOString().split('T')[0];
+    $('#minDate, #maxDate').attr('max', today);
+
     // 3. Save (create/update)
     $('#saveBtn').on('click', function () {
         const payload = {
@@ -95,4 +98,35 @@ $(function () {
             }
         });
     });
+});
+
+// Custom filtering function
+$.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+  const category = $('#filterCategory').val().toLowerCase();
+  const minDate = $('#minDate').val();
+  const maxDate = $('#maxDate').val();
+  const minAmount = parseFloat($('#minAmount').val()) || -Infinity;
+  const maxAmount = parseFloat($('#maxAmount').val()) || Infinity;
+
+  const rowCategory = data[2].toLowerCase();
+  const rowDate = data[1]; // format: YYYY-MM-DD
+  const rowAmount = parseFloat(data[3]) || 0;
+
+  if (category && rowCategory !== category) return false;
+  if (minDate && rowDate < minDate) return false;
+  if (maxDate && rowDate > maxDate) return false;
+  if (rowAmount < minAmount || rowAmount > maxAmount) return false;
+
+  return true;
+});
+
+// Trigger redraw on filter change
+$('#filterCategory, #minDate, #maxDate, #minAmount, #maxAmount').on('change keyup', function () {
+  $('#dataTable').DataTable().draw();
+});
+
+// Reset filters
+$('#resetFilters').on('click', function () {
+  $('#filterCategory, #minDate, #maxDate, #minAmount, #maxAmount').val('');
+  $('#dataTable').DataTable().draw();
 });
