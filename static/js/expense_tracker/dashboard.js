@@ -140,6 +140,12 @@ function applyFilters() {
     const startDate = startDateStr ? new Date(startDateStr + 'T00:00:00') : null;
     const endDate = endDateStr ? new Date(endDateStr + 'T23:59:59') : null;
 
+    // ❗ Show warning if end date is earlier than start date
+    if (startDate && endDate && endDate < startDate) {
+        alert("End date cannot be earlier than start date.");
+        return;
+    }
+
     // Filter transactions based on both category and date
     const filteredTransactions = window.transactions.filter(t => {
         const date = new Date(t.date + 'T12:00:00'); // Prevent timezone issues
