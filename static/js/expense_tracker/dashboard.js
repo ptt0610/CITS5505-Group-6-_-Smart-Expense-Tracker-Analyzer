@@ -131,3 +131,58 @@ var dailyLineChart = new Chart(ctxLine, {
         }
     }
 });
+
+function applyFilters() {
+    const selectedCategory = document.getElementById("categoryFilter").value;
+    const startDateStr = document.getElementById("startDate").value;
+    const endDateStr = document.getElementById("endDate").value;
+
+    const startDate = startDateStr ? new Date(startDateStr + 'T00:00:00') : null;
+    const endDate = endDateStr ? new Date(endDateStr + 'T23:59:59') : null;
+
+    // Filter transactions based on both category and date
+    const filteredTransactions = window.transactions.filter(t => {
+        const date = new Date(t.date + 'T12:00:00'); // Prevent timezone issues
+        const categoryMatch = selectedCategory === "All" || t.category === selectedCategory;
+        const dateMatch =
+            (!startDate || date >= startDate) &&
+            (!endDate || date <= endDate);
+        return categoryMatch && dateMatch;
+    });
+
+    // Aggregate spending by category
+    const categoryMap = {};
+    filteredTransactions.forEach(t => {
+        if (!categoryMap[t.category]) categoryMap[t.category] = 0;
+        categoryMap[t.category] += t.amount;
+    });
+
+    const filteredCategories = Object.keys(categoryMap);
+    const filteredSpending = Object.values(categoryMap);
+
+    // Aggregate daily totals
+    const dailyMap = {};
+    filteredTransactions.forEach(t => {
+        if (!dailyMap[t.date]) dailyMap[t.date] = 0;
+        dailyMap[t.date] += t.amount;
+    });
+
+    const sortedDates = Object.keys(dailyMap).sort();
+    const filteredLineLabels = sortedDates;
+    const filteredLineData = sortedDates.map(date => dailyMap[date]);
+
+    // Update bar & pie charts
+    categoryBarChart.data.labels = filteredCategories;
+    categoryBarChart.data.datasets[0].data = filteredSpending;
+
+    categoryPieChart.data.labels = filteredCategories;
+    categoryPieChart.data.datasets[0].data = filteredSpending;
+
+    // Update line chart
+    dailyLineChart.data.labels = filteredLineLabels;
+    dailyLineChart.data.datasets[0].data = filteredLineData;
+
+    categoryBarChart.update();
+    categoryPieChart.update();
+    dailyLineChart.update();
+}

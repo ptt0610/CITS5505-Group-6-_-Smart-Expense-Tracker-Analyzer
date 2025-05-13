@@ -106,7 +106,7 @@
                     <div class="progress mb-4">
                         <div class="progress-bar" role="progressbar" style="width: {{ percent }}%"
                             aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
+                        </div>
                 {% endfor %}
             </div>
         </div>
@@ -148,10 +148,12 @@
 
 <script>
     // Embed Jinja data into global JS variables
-    window.categories = {{ categories | tojson }};
+    window.categories = {{ categories | tojson | safe }};
     window.spending_by_category = {{ spending_by_category | tojson }};
     window.daily_labels = {{ daily_labels|tojson }};
     window.daily_totals = {{ daily_totals|tojson }};
+    window.transactions = {{ transactions | tojson }};
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
