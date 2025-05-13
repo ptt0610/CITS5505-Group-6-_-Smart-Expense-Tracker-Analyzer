@@ -81,17 +81,10 @@
                                         {{ (current_user.username if current_user.username else (current_user.first_name ~ ' ' ~ current_user.last_name)).strip() or 'User' }}
                                     </span>
                                     <img class="img-profile rounded-circle"
-<<<<<<< HEAD
                                         id="nav-profile-pic"
                                         src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
                                         alt="Profile Picture"
                                         style="width: 30px; height: 30px; object-fit: cover;">
-
-=======
-                                        src="{{ url_for('static', filename='img/default-user-icon.png') if not current_user.profile_pic else url_for('static', filename=current_user.profile_pic) }}"
-
-                                         alt="Profile Picture" style="width: 30px; height: 30px; object-fit: cover;">
->>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
