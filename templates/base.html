@@ -81,8 +81,11 @@
                                         {{ current_user.username or ('%s %s' % (current_user.first_name or '', current_user.last_name or '')) | trim | default('User', true) }}
                                     </span>
                                     <img class="img-profile rounded-circle"
-                                         src="{% if current_user.profile_pic %}{{ url_for('static', filename=current_user.profile_pic) }}{% else %}{{ url_for('static', filename='img/default-profile.jpg') }}{% endif %}"
-                                         alt="Profile Picture" style="width: 30px; height: 30px; object-fit: cover;">
+                                        id="nav-profile-pic"
+                                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
+                                        alt="Profile Picture"
+                                        style="width: 30px; height: 30px; object-fit: cover;">
+
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
