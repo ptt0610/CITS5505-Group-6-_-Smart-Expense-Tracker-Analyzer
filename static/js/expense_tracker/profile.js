@@ -10,6 +10,15 @@ document.addEventListener("DOMContentLoaded", function () {
   const monthSelect = document.getElementById("dob-month");
   const yearSelect = document.getElementById("dob-year");
 
+  // Live preview of uploaded image
+  if (profileImageInput && profilePreview) {
+    profileImageInput.addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+            profilePreview.src = URL.createObjectURL(file);
+        }
+    });
+}
 
   // Ensure the dropdowns are available
   if (!daySelect || !monthSelect || !yearSelect) {
