@@ -123,7 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
             errorDiv.style.display = "block";
         });
     });
-=======
       fetch('/update_profile', {
           method: 'POST',
           body: formData,
@@ -152,5 +151,4 @@ document.addEventListener("DOMContentLoaded", function () {
           errorDiv.style.display = "block";
       });
   });
->>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
-});
+
