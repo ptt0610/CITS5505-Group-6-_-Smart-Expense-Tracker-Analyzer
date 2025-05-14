@@ -95,8 +95,14 @@ document.addEventListener("DOMContentLoaded", function () {
           if (data.success) {
               confirmation.style.display = "block";
               setTimeout(() => {
+                const uploadedFile = profileImageInput.files[0];
+                if (uploadedFile && navProfilePic) {
+                    const previewURL = URL.createObjectURL(uploadedFile);
+                    navProfilePic.src = previewURL;
+                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
+                }
                   confirmation.style.display = "none";
-              }, 3000);
+              }, 3000); 
           } else {
               errorDiv.textContent = data.error || "An error occurred.";
               errorDiv.style.display = "block";

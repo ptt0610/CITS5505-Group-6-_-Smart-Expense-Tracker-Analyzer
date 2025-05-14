@@ -101,7 +101,8 @@
             </div>
             <div class="card-body text-center">
                 <img id="profile-preview"
-                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/undraw_profile.svg') }}"
+                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
+
                     alt="Profile Preview"
                     class="img-fluid rounded-circle mb-3"
                     width="150"
