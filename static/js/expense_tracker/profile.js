@@ -103,13 +103,24 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.success) {
                 confirmation.style.display = "block";
+        
+                // Update profile picture in navbar
+                const uploadedFile = profileImageInput.files[0];
+                if (uploadedFile && navProfilePic) {
+                    const previewURL = URL.createObjectURL(uploadedFile);
+                    navProfilePic.src = `${previewURL}?t=${new Date().getTime()}`; // Cache busting
+                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
+                }
+        
+                // Update username in navbar
+                const newUsername = document.getElementById("username").value;
+                const navUsername = document.getElementById("nav-username");
+                if (navUsername) {
+                    navUsername.textContent = newUsername;
+                }
+        
+                // Hide confirmation after delay
                 setTimeout(() => {
-                    const uploadedFile = profileImageInput.files[0];
-                    if (uploadedFile && navProfilePic) {
-                        const previewURL = URL.createObjectURL(uploadedFile);
-                        navProfilePic.src = `${previewURL}?t=${new Date().getTime()}`;
-                        setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
-                    }
                     confirmation.style.display = "none";
                 }, 3000);
             } else {
@@ -117,38 +128,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorDiv.style.display = "block";
             }
         })
+        
         .catch(error => {
             console.error("Error updating profile:", error);
             errorDiv.textContent = "Failed to update profile. Please try again.";
             errorDiv.style.display = "block";
         });
     });
-      fetch('/update_profile', {
-          method: 'POST',
-          body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              confirmation.style.display = "block";
-              setTimeout(() => {
-                const uploadedFile = profileImageInput.files[0];
-                if (uploadedFile && navProfilePic) {
-                    const previewURL = URL.createObjectURL(uploadedFile);
-                    navProfilePic.src = previewURL;
-                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
-                }
-                  confirmation.style.display = "none";
-              }, 3000); 
-          } else {
-              errorDiv.textContent = data.error || "An error occurred.";
-              errorDiv.style.display = "block";
-          }
-      })
-      .catch(error => {
-          console.error("Error updating profile:", error);
-          errorDiv.textContent = "Failed to update profile. Please try again.";
-          errorDiv.style.display = "block";
-      });
+    
   });
 
