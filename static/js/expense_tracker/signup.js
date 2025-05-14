@@ -1,38 +1,69 @@
-// Initialize Bootstrap tooltips
 document.addEventListener("DOMContentLoaded", function () {
+    // Enable Bootstrap tooltips
     $('[data-toggle="tooltip"]').tooltip();
-});
 
-// Password strength checker
-function checkPasswordStrength() {
-    const password = document.getElementById("password").value;
-    const strengthBar = document.getElementById(
-        "passwordStrengthBar"
-    );
-    let strength = 0;
+    const form = document.querySelector("form.user");
+    const passwordInput = document.getElementById("password");
+    const repeatPasswordInput = document.getElementById("repeatPassword");
+    const emailInput = document.getElementById("email");
+    const strengthBar = document.getElementById("passwordStrengthBar");
 
-    // Check for uppercase letters
-    if (password.match(/[A-Z]/)) strength += 25;
+    // Password strength checker (on input)
+    passwordInput.addEventListener("input", updateStrengthBar);
 
-    // Check for numbers
-    if (password.match(/[0-9]/)) strength += 25;
+    form.addEventListener("submit", function (e) {
+        const password = passwordInput.value.trim();
+        const repeatPassword = repeatPasswordInput.value.trim();
+        const email = emailInput.value.trim();
 
-    // Check for special characters
-    if (password.match(/[^a-zA-Z0-9]/)) strength += 25;
+        let valid = true;
+        let messages = [];
 
-    // Check for minimum length of 8 characters
-    if (password.length >= 8) strength += 25;
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            valid = false;
+            messages.push("Please enter a valid email address.");
+        }
 
-    // Update the strength bar width and aria-valuenow
-    strengthBar.style.width = strength + "%";
-    strengthBar.setAttribute("aria-valuenow", strength);
+        // Password validation
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            valid = false;
+            messages.push("Password must be at least 8 characters long and include one uppercase letter, one number, and one special character.");
+        }
 
-    // Update the bar color based on strength
-    if (strength < 50) {
-        strengthBar.className = "progress-bar bg-danger";
-    } else if (strength < 75) {
-        strengthBar.className = "progress-bar bg-warning";
-    } else {
-        strengthBar.className = "progress-bar bg-success";
+        // Confirm password match
+        if (password !== repeatPassword) {
+            valid = false;
+            messages.push("Passwords do not match.");
+        }
+
+        if (!valid) {
+            e.preventDefault(); // Stop form submission
+            alert(messages.join("\n")); // Show error messages
+        }
+    });
+
+    // Password strength bar
+    function updateStrengthBar() {
+        const password = passwordInput.value;
+        let strength = 0;
+
+        if (password.match(/[A-Z]/)) strength += 25;
+        if (password.match(/[0-9]/)) strength += 25;
+        if (password.match(/[^a-zA-Z0-9]/)) strength += 25;
+        if (password.length >= 8) strength += 25;
+
+        strengthBar.style.width = strength + "%";
+        strengthBar.setAttribute("aria-valuenow", strength);
+
+        if (strength < 50) {
+            strengthBar.className = "progress-bar bg-danger";
+        } else if (strength < 75) {
+            strengthBar.className = "progress-bar bg-warning";
+        } else {
+            strengthBar.className = "progress-bar bg-success";
+        }
     }
-}
+});
