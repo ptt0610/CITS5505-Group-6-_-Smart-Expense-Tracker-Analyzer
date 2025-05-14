@@ -21,29 +21,41 @@
                 <form id="profile-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="first-name">First Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="first-name" name="first_name" placeholder="Enter your first name" required>
+                        <input type="text" class="form-control" id="first-name" name="first_name" placeholder="Enter your first name" value="{{ current_user.first_name }}" required>
                     </div>
                     <div class="form-group">
                         <label for="last-name">Last Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="last-name" name="last_name" placeholder="Enter your last name" required>
+                        <input type="text" class="form-control" id="last-name" name="last_name" placeholder="Enter your last name" value="{{ current_user.last_name }}" required>
                     </div>
                     <div class="form-group">
                         <label for="username">Username <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" value="{{ current_user.username }}" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="dob">Date of Birth <span class="text-danger">*</span></label>
                         <div class="dob-wrapper">
-                            <select id="dob-day" name="dob_day" class="form-control mr-2" autocomplete="off" required>
+                            <select id="dob-day" name="dob_day" class="form-control mr-2" required>
                                 <option value="">Day</option>
+                                {% for d in range(1, 32) %}
+                                    <option value="{{ d }}" {% if dob_day == d %}selected{% endif %}>{{ d }}</option>
+                                {% endfor %}
                             </select>
-                            <select id="dob-month" name="dob_month" class="form-control mr-2" autocomplete="off" required>
+                            
+                            <select id="dob-month" name="dob_month" class="form-control mr-2" required>
                                 <option value="">Month</option>
+                                {% for m in range(1, 13) %}
+                                    <option value="{{ m }}" {% if dob_month == m %}selected{% endif %}>{{ m }}</option>
+                                {% endfor %}
                             </select>
-                            <select id="dob-year" name="dob_year" class="form-control" autocomplete="off" required>
+                            
+                            <select id="dob-year" name="dob_year" class="form-control" required>
                                 <option value="">Year</option>
+                                {% for y in range(current_year - 12, current_year - 100, -1) %}
+                                    <option value="{{ y }}" {% if dob_year == y %}selected{% endif %}>{{ y }}</option>
+                                {% endfor %}
                             </select>
+                            
                         </div>
                     </div>
                                        
@@ -51,15 +63,16 @@
                     
                     <div class="form-group">
                         <label for="email">Email ID <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ current_user.email }}" required>
                     </div>
                     <div class="form-group">
                         <label for="company">Company</label>
-                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter company name">
+                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter company name" value="{{ current_user.company or '' }}">
                     </div>
                     <div class="form-group">
                         <label for="salary">Average Monthly Salary ($)</label>
-                        <input type="number" class="form-control" id="salary" name="salary" placeholder="Enter monthly average salary">
+                        <input type="number" class="form-control" id="salary" name="salary" placeholder="Enter monthly average salary" value="{{ current_user.salary or '' }}">
+
                     </div>
                     <div class="form-group">
                         <label for="password">New Password <span class="text-danger">*</span></label>
@@ -87,7 +100,13 @@
                 <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
             </div>
             <div class="card-body text-center">
-                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
+                <img id="profile-preview"
+                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/undraw_profile.svg') }}"
+                    alt="Profile Preview"
+                    class="img-fluid rounded-circle mb-3"
+                    width="150"
+                    height="150">
+
                 <div class="form-group">
                     <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file">
                 </div>
