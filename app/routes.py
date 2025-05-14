@@ -167,7 +167,20 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+<<<<<<< Updated upstream
+    dob = current_user.dob
+    dob_day = dob.day if dob else ''
+    dob_month = dob.month if dob else ''
+    dob_year = dob.year if dob else ''
+    current_year = datetime.now().year
+    return render_template('profile.html', dob_day=dob_day, dob_month=dob_month, dob_year=dob_year, current_year=current_year)
+
+=======
+    return render_template(
+        'profile.html',
+        user=current_user
+    )
+>>>>>>> Stashed changes
 
 @app.route('/update_profile', methods=['POST'])
 @login_required

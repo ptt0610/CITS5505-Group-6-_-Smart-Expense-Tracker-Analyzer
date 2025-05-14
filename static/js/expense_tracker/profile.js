@@ -20,13 +20,12 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-  // Ensure the dropdowns are available
+    // Populate DOB dropdowns
     if (!daySelect || !monthSelect || !yearSelect) {
         console.error("DOB dropdown elements not found.");
         return;
     }
 
-    // Populate Days (1-31)
     for (let day = 1; day <= 31; day++) {
         const option = document.createElement("option");
         option.value = day;
@@ -34,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function () {
         daySelect.appendChild(option);
     }
 
-    // Populate Months (1-12)
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -46,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
         monthSelect.appendChild(option);
     });
 
-    // Populate Years (at least 12 years ago, up to 100 years ago)
     const today = new Date();
     const currentYear = today.getFullYear();
     const minYear = currentYear - 100;
@@ -59,7 +56,19 @@ document.addEventListener("DOMContentLoaded", function () {
         yearSelect.appendChild(option);
     }
 
-    // Prevent future dates
+    // Pre-fill DOB if available
+    const dobHidden = document.getElementById("dob-hidden");
+    const userDOB = dobHidden ? dobHidden.value : "";
+    if (userDOB) {
+        const [year, month, day] = userDOB.split("-");
+        if (year && month && day) {
+            yearSelect.value = parseInt(year);
+            monthSelect.value = parseInt(month);
+            daySelect.value = parseInt(day);
+        }
+    }
+
+    // Submit handler
     profileForm.addEventListener("submit", function (e) {
         e.preventDefault();
         errorDiv.style.display = "none";
@@ -94,14 +103,13 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.success) {
                 confirmation.style.display = "block";
-
-                // Update navbar profile pic immediately after successful upload
-                const newFile = profileImageInput.files[0];
-                if (newFile && navProfilePic) {
-                    navProfilePic.src = URL.createObjectURL(newFile);
-                }
-
                 setTimeout(() => {
+                    const uploadedFile = profileImageInput.files[0];
+                    if (uploadedFile && navProfilePic) {
+                        const previewURL = URL.createObjectURL(uploadedFile);
+                        navProfilePic.src = `${previewURL}?t=${new Date().getTime()}`;
+                        setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
+                    }
                     confirmation.style.display = "none";
                 }, 3000);
             } else {
