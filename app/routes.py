@@ -167,7 +167,20 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
-    return render_template('profile.html')
+<<<<<<< Updated upstream
+    dob = current_user.dob
+    dob_day = dob.day if dob else ''
+    dob_month = dob.month if dob else ''
+    dob_year = dob.year if dob else ''
+    current_year = datetime.now().year
+    return render_template('profile.html', dob_day=dob_day, dob_month=dob_month, dob_year=dob_year, current_year=current_year)
+
+=======
+    return render_template(
+        'profile.html',
+        user=current_user
+    )
+>>>>>>> Stashed changes
 
 @app.route('/update_profile', methods=['POST'])
 @login_required
@@ -317,6 +330,14 @@ def dashboard():
     daily_labels = sorted_days
     daily_totals = [daily_trend[day] for day in sorted_days]
 
+    # Send raw data to JavaScript for filtering by date and category
+    transactions = [{
+        'category': e.category,
+        'amount': e.amount,
+        'date': e.date.isoformat()  
+    } for e in expenses]
+
+
     return render_template(
         'dashboard.html',
         categories=categories,
@@ -329,7 +350,8 @@ def dashboard():
         monthly_spending=monthly_spending,      
         top_category_counts=top_category_counts,
         daily_labels=daily_labels,
-        daily_totals=daily_totals
+        daily_totals=daily_totals,
+        transactions=transactions 
     )
 
 @app.route('/records')

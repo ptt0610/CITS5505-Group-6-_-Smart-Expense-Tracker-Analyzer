@@ -20,42 +20,63 @@
 </head>
 <body id="page-top">
     <div id="wrapper">
+        <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
-                <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-calculator"></i>
-                </div>
-                <div class="sidebar-brand-text mx-3">SMART EXPENSE TRACKER</div>
+                <div class="sidebar-brand-text mx-3" style="font-size: 0.9rem;">SMART EXPENSE TRACKER & ANALYZER</div>
             </a>
+
+            <!-- Divider -->
             <hr class="sidebar-divider my-0">
-            <div class="sidebar-heading">Insights</div>
+            <div class="sidebar-heading mt-3">Insights</div>
+
+            <!-- Nav Item - Dashboard -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('dashboard') }}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Dashboard</span></a>
             </li>
+
+            <!-- Nav Item - Records -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('records') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Records</span></a>
             </li>
+
+            <!-- Devider -->
             <hr class="sidebar-divider">
             <div class="sidebar-heading">Share</div>
+
+            <!-- Nav Item - Share -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('share') }}">
                     <i class="fas fa-fw fa-share-square"></i>
                     <span>Share</span></a>
             </li>
+
+            <!-- Nav Item - Share History -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url_for('share_history') }}">
                     <i class="fas fa-fw fa-folder-open"></i>
                     <span>Share History</span></a>
             </li>
+
+            <!-- Sidebar Logo Watermark -->
+            <img class="sidebar-card-illustration mb-2" src="{{ url_for('static', filename='img/logoBnW.png') }}" 
+                alt="Logo" 
+                style="width: 100%; height: auto; opacity: 0.3;">         
+
             <hr class="sidebar-divider d-none d-md-block">
+
+            <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
             </div>
+                  
         </ul>
+
+        <!-- End of Sidebar -->
 
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -80,11 +101,12 @@
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                                         {{ (current_user.username if current_user.username else (current_user.first_name ~ ' ' ~ current_user.last_name)).strip() or 'User' }}
                                     </span>
-                                    <img class="img-profile rounded-circle"
-                                        id="nav-profile-pic"
-                                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
-                                        alt="Profile Picture"
-                                        style="width: 30px; height: 30px; object-fit: cover;">
+                                    <img id="nav-profile-pic"
+                                            class="img-profile rounded-circle"
+                                            src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
+                                            alt="Profile Picture"
+                                            style="width: 30px; height: 30px; object-fit: cover;">
+
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
