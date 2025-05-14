@@ -21,33 +21,23 @@
                 <form id="profile-form" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="first-name">First Name <span class="text-danger">*</span></label>
-<<<<<<< Updated upstream
-                        <input type="text" class="form-control" id="first-name" name="first_name" placeholder="Enter your first name" value="{{ current_user.first_name }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="last-name">Last Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="last-name" name="last_name" placeholder="Enter your last name" value="{{ current_user.last_name }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" value="{{ current_user.username }}" required>
-=======
-                        <input type="text" class="form-control" id="first-name" name="first_name"
-                                value="{{ current_user.first_name or '' }}" placeholder="Enter your first name" required>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="last-name">Last Name <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="last-name" name="last_name"
-                                value="{{ current_user.last_name or '' }}" placeholder="Enter your last name" required>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="username">Username <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="username" name="username"
-                                value="{{ current_user.username or '' }}" placeholder="Choose a username" required>
-
->>>>>>> Stashed changes
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="first-name" name="first_name"
+                                   placeholder="Enter your first name" value="{{ current_user.first_name or '' }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last-name">Last Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="last-name" name="last_name"
+                                   placeholder="Enter your last name" value="{{ current_user.last_name or '' }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="username">Username <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="username" name="username"
+                                   placeholder="Choose a username" value="{{ current_user.username or '' }}" required>
+                        </div>
+                        
                     </div>
                     
                     <div class="form-group">
@@ -81,33 +71,23 @@
                     
                     <div class="form-group">
                         <label for="email">Email ID <span class="text-danger">*</span></label>
-<<<<<<< Updated upstream
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ current_user.email }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="company">Company</label>
-                        <input type="text" class="form-control" id="company" name="company" placeholder="Enter company name" value="{{ current_user.company or '' }}">
-                    </div>
-                    <div class="form-group">
-                        <label for="salary">Average Monthly Salary ($)</label>
-                        <input type="number" class="form-control" id="salary" name="salary" placeholder="Enter monthly average salary" value="{{ current_user.salary or '' }}">
-=======
-                        <input type="email" class="form-control" id="email" name="email"
-                                value="{{ current_user.email or '' }}" placeholder="Enter your email" required>
-
-                    </div>
-                    <div class="form-group">
-                        <label for="company">Company</label>
-                        <input type="text" class="form-control" id="company" name="company"
-                                value="{{ current_user.company or '' }}" placeholder="Enter company name">
-
-                    </div>
-                    <div class="form-group">
-                        <label for="salary">Average Monthly Salary ($)</label>
-                        <input type="number" class="form-control" id="salary" name="salary"
-                                value="{{ current_user.salary or '' }}" placeholder="Enter monthly average salary">
->>>>>>> Stashed changes
-
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="email" name="email"
+                                   placeholder="Enter your email" value="{{ current_user.email or '' }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" class="form-control" id="company" name="company"
+                                   placeholder="Enter company name" value="{{ current_user.company or '' }}">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="salary">Average Monthly Salary ($)</label>
+                            <input type="number" class="form-control" id="salary" name="salary"
+                                   placeholder="Enter monthly average salary" value="{{ current_user.salary or '' }}">
+                        </div>
+                        
                     </div>
                     <div class="form-group">
                         <label for="password">New Password <span class="text-danger">*</span></label>
@@ -137,6 +117,20 @@
                 <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
             </div>
             <div class="card-body text-center">
+<<<<<<< HEAD
+<<<<<<< HEAD
+                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
+=======
+                <img id="profile-preview"
+                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
+
+                    alt="Profile Preview"
+                    class="img-fluid rounded-circle mb-3"
+                    width="150"
+                    height="150">
+
+>>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
+=======
 <<<<<<< Updated upstream
                 <img id="profile-preview"
                     src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
@@ -149,6 +143,7 @@
 =======
                 <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
 >>>>>>> Stashed changes
+>>>>>>> 2606494593988ecdef94853058eb22a0cb0a6355
                 <div class="form-group">
                     <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file">
                 </div>

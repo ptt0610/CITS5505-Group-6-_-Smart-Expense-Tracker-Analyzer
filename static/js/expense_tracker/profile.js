@@ -123,4 +123,34 @@ document.addEventListener("DOMContentLoaded", function () {
             errorDiv.style.display = "block";
         });
     });
+=======
+      fetch('/update_profile', {
+          method: 'POST',
+          body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              confirmation.style.display = "block";
+              setTimeout(() => {
+                const uploadedFile = profileImageInput.files[0];
+                if (uploadedFile && navProfilePic) {
+                    const previewURL = URL.createObjectURL(uploadedFile);
+                    navProfilePic.src = previewURL;
+                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
+                }
+                  confirmation.style.display = "none";
+              }, 3000); 
+          } else {
+              errorDiv.textContent = data.error || "An error occurred.";
+              errorDiv.style.display = "block";
+          }
+      })
+      .catch(error => {
+          console.error("Error updating profile:", error);
+          errorDiv.textContent = "Failed to update profile. Please try again.";
+          errorDiv.style.display = "block";
+      });
+  });
+>>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
 });
