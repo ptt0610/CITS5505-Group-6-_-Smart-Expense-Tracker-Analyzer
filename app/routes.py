@@ -225,6 +225,10 @@ def update_profile():
         file_path = os.path.join(upload_folder, filename)
         profile_pic.save(file_path)
         current_user.profile_pic = f'uploads/profile_pics/{filename}'
+
+        print("Uploaded file saved at:", file_path)
+        print("Assigned profile_pic path:", current_user.profile_pic)
+
         print(f"Profile picture saved: {file_path}")  # Debug
     elif profile_pic:
         print("Validation failed: Invalid file type")  # Debug
@@ -247,7 +251,18 @@ def update_profile():
     try:
         db.session.commit()
         print("Profile updated and saved to database")  # Debug
-        return jsonify(success="Profile updated successfully!")
+
+        profile_pic_url = url_for('static', filename=current_user.profile_pic or 'img/default-user-icon.png')
+        
+        print("PROFILE PIC URL:", profile_pic_url)
+
+        return jsonify({
+            "success": "Profile updated successfully!",
+            "profile_pic_url": profile_pic_url,
+            "username": current_user.username
+        })
+
+
     except Exception as e:
         db.session.rollback()
         print(f"Database error: {e}")  # Debug

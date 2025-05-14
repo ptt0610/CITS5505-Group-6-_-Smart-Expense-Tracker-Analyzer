@@ -104,13 +104,11 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success) {
                 confirmation.style.display = "block";
         
-                // Update profile picture in navbar
-                const uploadedFile = profileImageInput.files[0];
-                if (uploadedFile && navProfilePic) {
-                    const previewURL = URL.createObjectURL(uploadedFile);
-                    navProfilePic.src = `${previewURL}?t=${new Date().getTime()}`; // Cache busting
-                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
+                if (data.profile_pic_url && navProfilePic) {
+                    navProfilePic.src = `${data.profile_pic_url}?t=${new Date().getTime()}`; // Cache bust
                 }
+                
+                
         
                 // Update username in navbar
                 const newUsername = document.getElementById("username").value;

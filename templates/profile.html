@@ -18,7 +18,7 @@
                 <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
             </div>
             <div class="card-body">
-                <form id="profile-form" enctype="multipart/form-data">
+                <form id="profile-form" enctype="multipart/form-data" method="POST" action="{{ url_for('update_profile') }}">
                     <div class="form-group">
                         <label for="first-name">First Name <span class="text-danger">*</span></label>
                         <div class="form-group">
@@ -126,9 +126,9 @@
                     height="150">
 
                 <div class="form-group">
-                    <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file">
+                    <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file"><br>
+                    <small class="text-muted d-block mt-2">Upload a square image for best results.</small>
                 </div>
-                <small class="text-muted">Upload a square image for best results.</small>
             </div>
         </div>
     </div>
