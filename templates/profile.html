@@ -117,10 +117,6 @@
                 <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
             </div>
             <div class="card-body text-center">
-<<<<<<< HEAD
-<<<<<<< HEAD
-                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
-=======
                 <img id="profile-preview"
                     src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
 
@@ -129,21 +125,6 @@
                     width="150"
                     height="150">
 
->>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
-=======
-<<<<<<< Updated upstream
-                <img id="profile-preview"
-                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
-
-                    alt="Profile Preview"
-                    class="img-fluid rounded-circle mb-3"
-                    width="150"
-                    height="150">
-
-=======
-                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
->>>>>>> Stashed changes
->>>>>>> 2606494593988ecdef94853058eb22a0cb0a6355
                 <div class="form-group">
                     <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file">
                 </div>
