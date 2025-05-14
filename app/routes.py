@@ -317,6 +317,14 @@ def dashboard():
     daily_labels = sorted_days
     daily_totals = [daily_trend[day] for day in sorted_days]
 
+    # Send raw data to JavaScript for filtering by date and category
+    transactions = [{
+        'category': e.category,
+        'amount': e.amount,
+        'date': e.date.isoformat()  
+    } for e in expenses]
+
+
     return render_template(
         'dashboard.html',
         categories=categories,
@@ -329,7 +337,8 @@ def dashboard():
         monthly_spending=monthly_spending,      
         top_category_counts=top_category_counts,
         daily_labels=daily_labels,
-        daily_totals=daily_totals
+        daily_totals=daily_totals,
+        transactions=transactions 
     )
 
 @app.route('/records')

@@ -31,4 +31,21 @@ body {
     border-radius: 50%;
     border: 2px solid #ddd;
   }
-  
+/* DOB Dropdown Styling */
+#dob-day,
+#dob-month,
+#dob-year {
+    width: 100px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+/* Replace global .d-flex override */
+.dob-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+

@@ -31,10 +31,24 @@
                         <label for="username">Username <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Choose a username" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="dob">Date of Birth <span class="text-danger">*</span></label>
-                        <input type="date" class="form-control" id="dob" name="dob" required>
+                        <div class="dob-wrapper">
+                            <select id="dob-day" name="dob_day" class="form-control mr-2" autocomplete="off" required>
+                                <option value="">Day</option>
+                            </select>
+                            <select id="dob-month" name="dob_month" class="form-control mr-2" autocomplete="off" required>
+                                <option value="">Month</option>
+                            </select>
+                            <select id="dob-year" name="dob_year" class="form-control" autocomplete="off" required>
+                                <option value="">Year</option>
+                            </select>
+                        </div>
                     </div>
+                                       
+                    
+                    
                     <div class="form-group">
                         <label for="email">Email ID <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
