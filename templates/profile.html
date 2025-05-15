@@ -52,9 +52,6 @@
                             
                             <select id="dob-month" name="dob_month" class="form-control mr-2" required>
                                 <option value="">Month</option>
-                                {% for m in range(1, 13) %}
-                                    <option value="{{ m }}" {% if dob_month == m %}selected{% endif %}>{{ m }}</option>
-                                {% endfor %}
                             </select>
                             
                             <select id="dob-year" name="dob_year" class="form-control" required>
