@@ -137,6 +137,15 @@ document.addEventListener("DOMContentLoaded", function () {
             errorDiv.style.display = "block";
         });
     });
-    
+    // Show/hide password toggle
+    document.querySelectorAll(".toggle-password").forEach(function (icon) {
+        icon.addEventListener("click", function () {
+            const input = document.querySelector(this.getAttribute("toggle"));
+            const isPassword = input.type === "password";
+            input.type = isPassword ? "text" : "password";
+            this.classList.toggle("fa-eye");
+            this.classList.toggle("fa-eye-slash");
+        });
+    });
   });
 
