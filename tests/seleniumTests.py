@@ -129,17 +129,6 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         except:
             self.fail("Expected alert for weak password was not shown.")
 
-    def test_signup_missing_fields(self):
-        # NOTE: This form uses HTML5 'required' validation.
-        # No POST is sent when fields are empty, so we assert that the page does not change.
-
-        self.driver.get(f"{BASE_URL}/signup")
-        current_url = self.driver.current_url
-
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-        self.wait.until(EC.url_contains("/signup"))
-        self.assertEqual(self.driver.current_url, current_url)
-    
     def test_signup_password_mismatch(self):
         # NOTE: This form uses HTML5 pattern validation for password complexity.
         # Invalid passwords are rejected by the browser before submitting, so we only check that the page does not navigate.
@@ -167,5 +156,17 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         except:
             self.fail("Expected alert for password mismatch was not shown.")
 
+    def test_signup_missing_fields(self):
+        # NOTE: This form uses HTML5 'required' validation.
+        # No POST is sent when fields are empty, so we assert that the page does not change.
+
+        self.driver.get(f"{BASE_URL}/signup")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/signup"))
+        self.assertEqual(self.driver.current_url, current_url)
+        self.assertIn("required", self._flash_text().lower())
+    
 if __name__ == "__main__":
     unittest.main()
