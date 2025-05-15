@@ -131,4 +131,15 @@ Follow these simple steps to get started with the Smart Expense Tracker & Analyz
 
 ## 🧪 Running the Tests
 
+This project uses Unit Testing for testing the backend logic and Selenium Testing for testing the full user experience in the browser.
+
+### 🧪 Selenium Tests
+
+The **end-to-end Selenium tests** will simulate real user interactions to verify key flows such as signup, login, form validation, page redirection, dashboard filtering, record management, sharing, and profile updates.
+
+
+To run the tests:
+
+```bash
+python -m unittest tests/seleniumTests.py
 
