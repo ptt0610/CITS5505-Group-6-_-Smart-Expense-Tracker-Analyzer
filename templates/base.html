@@ -103,7 +103,9 @@
                                     </span>
                                     <img id="nav-profile-pic"
                                         class="img-profile rounded-circle"
-                                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
+                                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}?t={{ current_user.profile_pic }}"
+
+
                                         alt="Profile Picture"
                                         style="width: 30px; height: 30px; object-fit: cover;">
 

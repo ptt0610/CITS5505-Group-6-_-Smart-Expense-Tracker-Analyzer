@@ -220,11 +220,18 @@ def update_profile():
     profile_pic = request.files.get('profile_image')
     if profile_pic and allowed_file(profile_pic.filename):
         filename = secure_filename(profile_pic.filename)
+    
+        # Make filename unique to avoid overwrite and caching
+        import time
+        unique_filename = f"{int(time.time())}_{filename}"
+    
         upload_folder = app.config['UPLOAD_FOLDER']
         os.makedirs(upload_folder, exist_ok=True)
-        file_path = os.path.join(upload_folder, filename)
+        file_path = os.path.join(upload_folder, unique_filename)
         profile_pic.save(file_path)
-        current_user.profile_pic = f'uploads/profile_pics/{filename}'
+    
+        current_user.profile_pic = f'uploads/profile_pics/{unique_filename}'
+
 
         print("Uploaded file saved at:", file_path)
         print("Assigned profile_pic path:", current_user.profile_pic)

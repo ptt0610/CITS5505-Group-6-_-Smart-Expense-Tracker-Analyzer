@@ -15,9 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
         profileImageInput.addEventListener("change", function () {
             const file = this.files[0];
             if (file) {
+                console.log("Selected file:", file);
                 profilePreview.src = URL.createObjectURL(file);
+            } else {
+                console.log("No file selected");
             }
         });
+        
     }
 
     // Populate DOB dropdowns
