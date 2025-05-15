@@ -72,6 +72,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Password validation
+    function isValidPassword(password) {
+        const lengthCheck = /.{8,}/;
+        const uppercaseCheck = /[A-Z]/;
+        const numberCheck = /[0-9]/;
+        const specialCharCheck = /[!@#$%^&*(),.?":{}|<>]/;
+
+        return (
+            lengthCheck.test(password) &&
+            uppercaseCheck.test(password) &&
+            numberCheck.test(password) &&
+            specialCharCheck.test(password)
+        );
+    }
+
+
     // Submit handler
     profileForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -94,6 +110,21 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Please select a valid date of birth. You must be at least 12 years old.");
             return;
         }
+
+        // Check if password match and is valid
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+
+        if (!isValidPassword(password)) {
+            alert("Password must be at least 8 characters long and include one uppercase letter, one number, and one special character.");
+            return;
+        }
+
 
         const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         const formData = new FormData(profileForm);
