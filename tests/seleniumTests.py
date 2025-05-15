@@ -29,6 +29,19 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         except Exception:
             return ""
 
+    # Landing Page
+    def test_landing_page_signup_button(self):
+        self.driver.get(BASE_URL)
+        self.driver.find_element(By.LINK_TEXT, "Sign Up").click()
+        self.wait.until(EC.url_contains("/signup"))
+        self.assertIn("/signup", self.driver.current_url)
+
+    def test_landing_page_login_button(self):
+        self.driver.get(BASE_URL)
+        self.driver.find_element(By.LINK_TEXT, "Log In").click()
+        self.wait.until(EC.url_contains("/login"))
+        self.assertIn("/login", self.driver.current_url)
+
     # Signup 
     def test_signup_success(self):
         email = self._unique_email()
