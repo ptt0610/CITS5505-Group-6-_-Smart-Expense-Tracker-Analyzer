@@ -8,6 +8,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailInput = document.getElementById("email");
     const strengthBar = document.getElementById("passwordStrengthBar");
 
+    const togglePasswordBtn = document.getElementById("togglePassword");
+    const toggleRepeatPasswordBtn = document.getElementById("toggleRepeatPassword");
+
+    // Toggle password visibility
+    togglePasswordBtn.addEventListener("click", function () {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+    });
+
+    toggleRepeatPasswordBtn.addEventListener("click", function () {
+        const type = repeatPasswordInput.getAttribute("type") === "password" ? "text" : "password";
+        repeatPasswordInput.setAttribute("type", type);
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+    });
+
     // Password strength checker (on input)
     passwordInput.addEventListener("input", updateStrengthBar);
 
