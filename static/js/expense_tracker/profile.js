@@ -15,9 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
         profileImageInput.addEventListener("change", function () {
             const file = this.files[0];
             if (file) {
+                console.log("Selected file:", file);
                 profilePreview.src = URL.createObjectURL(file);
+            } else {
+                console.log("No file selected");
             }
         });
+        
     }
 
     // Populate DOB dropdowns
@@ -103,13 +107,22 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             if (data.success) {
                 confirmation.style.display = "block";
+        
+                if (data.profile_pic_url && navProfilePic) {
+                    navProfilePic.src = `${data.profile_pic_url}?t=${new Date().getTime()}`; // Cache bust
+                }
+                
+                
+        
+                // Update username in navbar
+                const newUsername = document.getElementById("username").value;
+                const navUsername = document.getElementById("nav-username");
+                if (navUsername) {
+                    navUsername.textContent = newUsername;
+                }
+        
+                // Hide confirmation after delay
                 setTimeout(() => {
-                    const uploadedFile = profileImageInput.files[0];
-                    if (uploadedFile && navProfilePic) {
-                        const previewURL = URL.createObjectURL(uploadedFile);
-                        navProfilePic.src = `${previewURL}?t=${new Date().getTime()}`;
-                        setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
-                    }
                     confirmation.style.display = "none";
                 }, 3000);
             } else {
@@ -117,38 +130,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 errorDiv.style.display = "block";
             }
         })
+        
         .catch(error => {
             console.error("Error updating profile:", error);
             errorDiv.textContent = "Failed to update profile. Please try again.";
             errorDiv.style.display = "block";
         });
     });
-      fetch('/update_profile', {
-          method: 'POST',
-          body: formData,
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              confirmation.style.display = "block";
-              setTimeout(() => {
-                const uploadedFile = profileImageInput.files[0];
-                if (uploadedFile && navProfilePic) {
-                    const previewURL = URL.createObjectURL(uploadedFile);
-                    navProfilePic.src = previewURL;
-                    setTimeout(() => URL.revokeObjectURL(previewURL), 5000);
-                }
-                  confirmation.style.display = "none";
-              }, 3000); 
-          } else {
-              errorDiv.textContent = data.error || "An error occurred.";
-              errorDiv.style.display = "block";
-          }
-      })
-      .catch(error => {
-          console.error("Error updating profile:", error);
-          errorDiv.textContent = "Failed to update profile. Please try again.";
-          errorDiv.style.display = "block";
-      });
+    // Show/hide password toggle
+    document.querySelectorAll(".toggle-password").forEach(function (icon) {
+        icon.addEventListener("click", function () {
+            const input = document.querySelector(this.getAttribute("toggle"));
+            const isPassword = input.type === "password";
+            input.type = isPassword ? "text" : "password";
+            this.classList.toggle("fa-eye");
+            this.classList.toggle("fa-eye-slash");
+        });
+    });
   });
 

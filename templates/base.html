@@ -98,14 +98,17 @@
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                                    <span id="nav-username" class="mr-2 d-none d-lg-inline text-gray-600 small">
                                         {{ (current_user.username if current_user.username else (current_user.first_name ~ ' ' ~ current_user.last_name)).strip() or 'User' }}
                                     </span>
                                     <img id="nav-profile-pic"
-                                            class="img-profile rounded-circle"
-                                            src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
-                                            alt="Profile Picture"
-                                            style="width: 30px; height: 30px; object-fit: cover;">
+                                        class="img-profile rounded-circle"
+                                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}?t={{ current_user.profile_pic }}"
+
+
+                                        alt="Profile Picture"
+                                        style="width: 30px; height: 30px; object-fit: cover;">
+
 
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"

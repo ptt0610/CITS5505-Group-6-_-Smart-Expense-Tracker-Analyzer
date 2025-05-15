@@ -10,150 +10,132 @@
 {% block content %}
 <h1 class="h3 mb-4 text-gray-800">Profile Settings</h1>
 
-<div class="row">
-    <!-- Form Column -->
-    <div class="col-lg-8">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
-            </div>
-            <div class="card-body">
-                <form id="profile-form" enctype="multipart/form-data">
+<form id="profile-form" enctype="multipart/form-data" method="POST" action="{{ url_for('update_profile') }}">
+    <div class="row">
+        <!-- Form Column -->
+        <div class="col-lg-8">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Update Your Profile</h6>
+                </div>
+                <div class="card-body">
                     <div class="form-group">
                         <label for="first-name">First Name <span class="text-danger">*</span></label>
-                        <div class="form-group">
-                            <input type="text" class="form-control" id="first-name" name="first_name"
-                                   placeholder="Enter your first name" value="{{ current_user.first_name or '' }}" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="last-name">Last Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="last-name" name="last_name"
-                                   placeholder="Enter your last name" value="{{ current_user.last_name or '' }}" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="username">Username <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="username" name="username"
-                                   placeholder="Choose a username" value="{{ current_user.username or '' }}" required>
-                        </div>
-                        
+                        <input type="text" class="form-control" id="first-name" name="first_name"
+                               placeholder="Enter your first name" value="{{ current_user.first_name or '' }}" required>
                     </div>
-                    
+
+                    <div class="form-group">
+                        <label for="last-name">Last Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="last-name" name="last_name"
+                               placeholder="Enter your last name" value="{{ current_user.last_name or '' }}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username">Username <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username"
+                               placeholder="Choose a username" value="{{ current_user.username or '' }}" required>
+                    </div>
+
                     <div class="form-group">
                         <label for="dob">Date of Birth <span class="text-danger">*</span></label>
-                        <div class="dob-wrapper">
+                        <div class="dob-wrapper d-flex">
                             <select id="dob-day" name="dob_day" class="form-control mr-2" required>
                                 <option value="">Day</option>
                                 {% for d in range(1, 32) %}
                                     <option value="{{ d }}" {% if dob_day == d %}selected{% endif %}>{{ d }}</option>
                                 {% endfor %}
                             </select>
-                            
                             <select id="dob-month" name="dob_month" class="form-control mr-2" required>
                                 <option value="">Month</option>
-                                {% for m in range(1, 13) %}
-                                    <option value="{{ m }}" {% if dob_month == m %}selected{% endif %}>{{ m }}</option>
-                                {% endfor %}
                             </select>
-                            
                             <select id="dob-year" name="dob_year" class="form-control" required>
                                 <option value="">Year</option>
                                 {% for y in range(current_year - 12, current_year - 100, -1) %}
                                     <option value="{{ y }}" {% if dob_year == y %}selected{% endif %}>{{ y }}</option>
                                 {% endfor %}
                             </select>
-                            
                         </div>
                     </div>
-                                       
-                    
-                    
+
                     <div class="form-group">
                         <label for="email">Email ID <span class="text-danger">*</span></label>
-                        <div class="form-group">
-                            <input type="email" class="form-control" id="email" name="email"
-                                   placeholder="Enter your email" value="{{ current_user.email or '' }}" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="company">Company</label>
-                            <input type="text" class="form-control" id="company" name="company"
-                                   placeholder="Enter company name" value="{{ current_user.company or '' }}">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="salary">Average Monthly Salary ($)</label>
-                            <input type="number" class="form-control" id="salary" name="salary"
-                                   placeholder="Enter monthly average salary" value="{{ current_user.salary or '' }}">
-                        </div>
-                        
+                        <input type="email" class="form-control" id="email" name="email"
+                               placeholder="Enter your email" value="{{ current_user.email or '' }}" required>
                     </div>
+
+                    <div class="form-group">
+                        <label for="company">Company</label>
+                        <input type="text" class="form-control" id="company" name="company"
+                               placeholder="Enter company name" value="{{ current_user.company or '' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="salary">Average Monthly Salary ($)</label>
+                        <input type="number" class="form-control" id="salary" name="salary"
+                               placeholder="Enter monthly average salary" value="{{ current_user.salary or '' }}">
+                    </div>
+
                     <div class="form-group">
                         <label for="password">New Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
+
+                        <small class="form-text text-muted" title="Password must be at least 8 characters long and include one uppercase letter, one number, and one special character.">
+                            <i class="fas fa-info-circle"></i> Password must meet complexity requirements.
+                        </small>
+                        
+                        <div class="position-relative">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
+                            <i class="fa fa-eye-slash toggle-password" toggle="#password" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                        </div>
+                        
                     </div>
+
                     <div class="form-group">
                         <label for="confirm-password">Confirm Password <span class="text-danger">*</span></label>
-                        <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm new password" required>
+                        <div class="position-relative">
+                            <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm new password" required>
+                            <i class="fa fa-eye-slash toggle-password" toggle="#confirm-password" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
+                        </div>
+                        
                     </div>
-                    <button type="submit" class="btn btn-primary">Update Profile</button>
-                    <div id="confirmation" class="mt-3 text-success font-weight-bold" style="display:none;">
-                        Profile updated successfully!
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                        <div id="confirmation" class="mt-3 text-success font-weight-bold" style="display:none;">
+                            Profile updated successfully!
+                        </div>
+                        <div id="error" class="mt-3 text-danger font-weight-bold" style="display:none;"></div>
                     </div>
-                    <div id="error" class="mt-3 text-danger font-weight-bold" style="display:none;"></div>
+
                     <input type="hidden" id="dob-hidden" value="{{ current_user.dob.isoformat() if current_user.dob else '' }}">
-
-                </form>
-                <small class="form-text text-muted mt-2">Fields marked <span class="text-danger">*</span> are required.</small>
-            </div>
-        </div>
-    </div>
-
-    <!-- Profile Picture Column -->
-    <div class="col-lg-4">
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
-            </div>
-            <div class="card-body text-center">
-<<<<<<< HEAD
-<<<<<<< HEAD
-                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
-=======
-                <img id="profile-preview"
-                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
-
-                    alt="Profile Preview"
-                    class="img-fluid rounded-circle mb-3"
-                    width="150"
-                    height="150">
-
->>>>>>> 8831ec8 (Fix: Display full name fallback when username is not set)
-=======
-<<<<<<< Updated upstream
-                <img id="profile-preview"
-                    src="{{ url_for('static', filename=current_user.profile_pic) if current_user.profile_pic else url_for('static', filename='img/default-user-icon.png') }}"
-
-                    alt="Profile Preview"
-                    class="img-fluid rounded-circle mb-3"
-                    width="150"
-                    height="150">
-
-=======
-                <img id="profile-preview" src="{{ url_for('static', filename = current_user.profile_pic or 'img/undraw_profile.svg') }}" alt="Profile Preview" class="img-fluid rounded-circle mb-3" width="150" height="150" />
->>>>>>> Stashed changes
->>>>>>> 2606494593988ecdef94853058eb22a0cb0a6355
-                <div class="form-group">
-                    <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file">
+                    <small class="form-text text-muted mt-2">Fields marked <span class="text-danger">*</span> are required.</small>
                 </div>
-                <small class="text-muted">Upload a square image for best results.</small>
+            </div>
+        </div>
+
+        <!-- Profile Picture Column -->
+        <div class="col-lg-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Profile Picture</h6>
+                </div>
+                <div class="card-body text-center">
+                    <img id="profile-preview"
+                        src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default-user-icon.png') }}"
+                        alt="Profile Preview"
+                        class="img-fluid rounded-circle mb-3"
+                        width="150"
+                        height="150">
+                    <div class="form-group">
+                        <input type="file" id="profile-image" name="profile_image" accept="image/*" class="form-control-file"><br>
+                        <small class="text-muted d-block mt-2">Upload a square image for best results.</small>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 {% endblock %}
-const userDOB = "{{ current_user.dob.isoformat() if current_user.dob else '' }}";
 
 {% block footer_extra %}
 <script src="{{ url_for('static', filename='js/expense_tracker/profile.js') }}"></script>

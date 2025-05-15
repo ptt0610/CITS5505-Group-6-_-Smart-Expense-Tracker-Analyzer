@@ -31,6 +31,21 @@ body {
     border-radius: 50%;
     border: 2px solid #ddd;
   }
+
+/* Center and nudge file input + help text to the right */
+.card-body.text-center .form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 60px;
+}
+
+/* Adjust help text alignment under file input */
+.card-body.text-center .form-group small.text-muted {
+  margin-left: -40px; 
+}
+
+
 /* DOB Dropdown Styling */
 #dob-day,
 #dob-month,
