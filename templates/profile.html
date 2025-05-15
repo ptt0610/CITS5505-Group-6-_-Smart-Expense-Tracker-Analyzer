@@ -78,6 +78,11 @@
 
                     <div class="form-group">
                         <label for="password">New Password <span class="text-danger">*</span></label>
+
+                        <small class="form-text text-muted" title="Password must be at least 8 characters long and include one uppercase letter, one number, and one special character.">
+                            <i class="fas fa-info-circle"></i> Password must meet complexity requirements.
+                        </small>
+                        
                         <div class="position-relative">
                             <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password" required>
                             <i class="fa fa-eye-slash toggle-password" toggle="#password" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); cursor: pointer;"></i>
