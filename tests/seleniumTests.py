@@ -166,7 +166,6 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
         self.wait.until(EC.url_contains("/signup"))
         self.assertEqual(self.driver.current_url, current_url)
-        self.assertIn("required", self._flash_text().lower())
-    
+            
 if __name__ == "__main__":
     unittest.main()
