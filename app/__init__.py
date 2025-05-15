@@ -3,40 +3,37 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from flask import Blueprint
 from config import Config
 
-# Initialize extensions
 db = SQLAlchemy()
 migrate = Migrate()
 login = LoginManager()
+core = Blueprint('core', __name__)
 
-app = Flask(
-    __name__,
-    template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
-    static_folder=os.path.join(os.path.dirname(__file__), '..', 'static')
-)
+def create_application():
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(os.path.dirname(__file__), '..', 'templates'),
+        static_folder=os.path.join(os.path.dirname(__file__), '..', 'static')
+    )
+    app.config.from_object(Config)
 
-# Load configuration from config.py
-app.config.from_object(Config)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login.init_app(app)
+    login.login_view = 'core.login'
+    login.login_message_category = 'info'
 
-# Print the URI to check it
-print("SQLAlchemy Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+    from app import routes
+    app.register_blueprint(core)
 
-# Initialize extensions
-db.init_app(app)
-migrate.init_app(app, db)
-login.init_app(app)
-login.login_view = 'login'
-login.login_message_category = 'info'
+    from app.models import User, Expense, SharedExpense
 
-# Define user_loader callback for Flask-Login
-@login.user_loader
-def load_user(user_id):
-    from app.models import User
-    return User.query.get(int(user_id))
+    @login.user_loader
+    def load_user(user_id):
+        return db.session.get(User, int(user_id))
 
-# Import models to ensure they are registered with SQLAlchemy
-from app.models import User, Expense, SharedExpense
+    return app
 
-# Import routes to register them with the app
-from app import routes
+app = create_application()
