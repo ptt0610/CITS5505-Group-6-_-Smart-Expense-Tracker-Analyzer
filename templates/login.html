@@ -51,7 +51,7 @@
                   {% endwith %}
 
                   <!-- Login form -->
-                  <form class="user" method="post" action="{{ url_for('login') }}">
+                  <form class="user" method="post" action="{{ url_for('core.login') }}">
                     <div class="form-group">
                       <input
                         name="email"
@@ -82,10 +82,10 @@
                   </form>
 
                   <div class="text-center">
-                    <a class="small" href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+                    <a class="small" href="{{ url_for('core.forgot_password') }}">Forgot Password?</a>
                   </div>
                   <div class="text-center">
-                    <a class="small" href="{{ url_for('signup') }}">Create an Account!</a>
+                    <a class="small" href="{{ url_for('core.signup') }}">Create an Account!</a>
                   </div>
                 </div>
               </div>

@@ -22,7 +22,7 @@
     <div id="wrapper">
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('home') }}">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('core.home') }}">
                 <div class="sidebar-brand-text mx-3" style="font-size: 0.9rem;">SMART EXPENSE TRACKER & ANALYZER</div>
             </a>
 
@@ -32,14 +32,14 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('dashboard') }}">
+                <a class="nav-link" href="{{ url_for('core.dashboard') }}">
                     <i class="fas fa-fw fa-chart-area"></i>
                     <span>Dashboard</span></a>
             </li>
 
             <!-- Nav Item - Records -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('records') }}">
+                <a class="nav-link" href="{{ url_for('core.records') }}">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Records</span></a>
             </li>
@@ -50,14 +50,14 @@
 
             <!-- Nav Item - Share -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('share') }}">
+                <a class="nav-link" href="{{ url_for('core.share') }}">
                     <i class="fas fa-fw fa-share-square"></i>
                     <span>Share</span></a>
             </li>
 
             <!-- Nav Item - Share History -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('share_history') }}">
+                <a class="nav-link" href="{{ url_for('core.share_history') }}">
                     <i class="fas fa-fw fa-folder-open"></i>
                     <span>Share History</span></a>
             </li>
@@ -113,7 +113,7 @@
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="{{ url_for('profile') }}">
+                                    <a class="dropdown-item" href="{{ url_for('core.profile') }}">
                                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Profile
                                     </a>
@@ -126,19 +126,19 @@
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('login') }}">
+                                <a class="nav-link" href="{{ url_for('core.login') }}">
                                     <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Login
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('signup') }}">
+                                <a class="nav-link" href="{{ url_for('core.signup') }}">
                                     <i class="fas fa-user-plus fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Sign Up
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ url_for('forgot_password') }}">
+                                <a class="nav-link" href="{{ url_for('core.forgot_password') }}">
                                     <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Forgot Password
                                 </a>
@@ -195,7 +195,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="{{ url_for('logout') }}">Logout</a>
+                    <a class="btn btn-primary" href="{{ url_for('core.logout') }}">Logout</a>
                 </div>
             </div>
         </div>
