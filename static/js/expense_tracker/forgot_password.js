@@ -1,10 +1,41 @@
+// Password complexity validation
+function isPasswordValid(password) {
+    const minLength = 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return (
+        password.length >= minLength &&
+        hasUppercase &&
+        hasLowercase &&
+        hasNumber &&
+        hasSpecialChar
+    );
+}
+
+// Enable Bootstrap tooltips
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip();
+});
+
+
 // Client-side validation for the password reset form
 document.querySelector("form").addEventListener("submit", function (event) {
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirm_password").value;
+    const password = document.getElementById("password").value.trim();
+    const confirmPassword = document.getElementById("confirm_password").value.trim();
+
     if (password !== confirmPassword) {
         event.preventDefault();
         alert("Passwords do not match!");
+        return;
+    }
+
+    if (!isPasswordValid(password)) {
+        event.preventDefault();
+        alert("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
+        return;
     }
 });
 
