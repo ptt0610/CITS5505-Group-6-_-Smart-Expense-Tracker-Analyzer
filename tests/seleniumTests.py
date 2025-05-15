@@ -166,6 +166,78 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
         self.wait.until(EC.url_contains("/signup"))
         self.assertEqual(self.driver.current_url, current_url)
-            
+
+    # Login 
+    def test_login_success(self):
+        email = self._unique_email()
+
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Login"), ("last_name", "User"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        try:
+            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        except:
+            pass
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        self.wait.until(EC.url_contains("/dashboard"))
+        self.assertIn("/dashboard", self.driver.current_url)
+
+    def test_login_invalid_pwd(self):
+        # NOTE: This form uses HTML5 pattern validation for password complexity.
+        # Invalid passwords are rejected by the browser before submitting, so we only check that the page does not navigate.
+
+        email = self._unique_email()
+
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Bad"), ("last_name", "Pass"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        try:
+            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        except:
+            pass
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("WrongPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        # Wait briefly to see if alert appears
+        self.wait.until(EC.url_contains("/login"))
+        self.assertIn("/login", self.driver.current_url)
+        self.assertIn("invalid", self._flash_text().lower())
+
+    def test_login_invalid_email_format(self):
+        # NOTE: This form uses HTML5 email format validation.
+        # If the email format is invalid, the form is not submitted and no request is sent to the server.
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.NAME, "email").send_keys("invalid_email@domain")  # invalid email
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        self.wait.until(EC.url_contains("/login"))
+        self.assertEqual(self.driver.current_url, current_url)
+
+    def test_login_missing_fields(self):
+        # NOTE: This form uses HTML5 'required' validation.
+        # No POST is sent when fields are empty, so we assert that the page does not change.
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+        self.assertEqual(self.driver.current_url, current_url)
+
+
 if __name__ == "__main__":
     unittest.main()
