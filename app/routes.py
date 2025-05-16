@@ -1,13 +1,14 @@
-from flask import render_template, redirect, url_for, flash, request, jsonify
+from flask import render_template, redirect, url_for, flash, request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
-from app import app, db
+from app import db
 from app.models import User, Expense, SharedExpense
 from werkzeug.utils import secure_filename
 import os
 from sqlalchemy import func, extract
 from collections import defaultdict
 from collections import Counter
+from app import core
 
 # Allowed file extensions for profile pictures
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
@@ -15,50 +16,48 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/')
+@core.route('/')
 def home():
     return render_template('home.html')
 
-@app.route('/signup', methods=['GET', 'POST'])
+@core.route('/signup', methods=['GET', 'POST'])
 def signup():
-    print(f"Received request: {request.method} {request.url}")  # Debug
+    print(f"Received request: {request.method} {request.url}")
     if request.method == 'POST':
-        print(f"Form data: {request.form}")  # Debug entire form
+        print(f"Form data: {request.form}")
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         email = request.form.get('email')
         password = request.form.get('password')
-        
-        print(f"Parsed form - first_name: {first_name}, last_name: {last_name}, email: {email}, password: {password}")  # Debug
+        print(f"Parsed form - first_name: {first_name}, last_name: {last_name}, email: {email}, password: {password}")
         if not email or not password:
             flash('Email and password are required.', 'danger')
-            print("Validation failed: Missing email or password")  # Debug
-            return redirect(url_for('signup'))
+            print("Validation failed: Missing email or password")
+            return redirect(url_for('core.signup'))
         if User.query.filter_by(email=email).first():
             flash('Email already registered.', 'danger')
-            print(f"Validation failed: Email {email} already exists")  # Debug
-            return redirect(url_for('signup'))
-        
-        print("Creating User instance")  # Debug
+            print(f"Validation failed: Email {email} already exists")
+            return redirect(url_for('core.signup'))
+        print("Creating User instance")
         user = User(email=email, first_name=first_name, last_name=last_name)
         user.set_password(password)
-        print("User password set")  # Debug
+        print("User password set")
         db.session.add(user)
-        print("User added to session")  # Debug
+        print("User added to session")
         try:
             db.session.commit()
-            print(f"User {email} saved to database")  # Debug
+            print(f"User {email} saved to database")
             flash('Registration successful. Please log in.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('core.login'))
         except Exception as e:
             db.session.rollback()
-            print(f"Database error: {e}")  # Debug
+            print(f"Database error: {e}")
             flash(f'Error registering user: {str(e)}', 'danger')
-            return redirect(url_for('signup'))
-    print("Rendering signup.html")  # Debug
+            return redirect(url_for('core.signup'))
+    print("Rendering signup.html")
     return render_template('signup.html')
 
-@app.route('/forgot-password', methods=['GET', 'POST'])
+@core.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     print(f"DEBUG: Received request: {request.method} {request.url}")
     if request.method == 'POST':
@@ -66,74 +65,62 @@ def forgot_password():
         email = request.form.get('email')
         password = request.form.get('password')
         confirm_password = request.form.get('confirm_password')
-        
         print(f"DEBUG: Parsed form - email: {email}, password: {password}, confirm_password: {confirm_password}")
-        
-        # Step 1: Validate inputs
         if not email:
             print("DEBUG: Validation failed: Email is missing")
             flash('Email is required.', 'danger')
-            return redirect(url_for('forgot_password'))
+            return redirect(url_for('core.forgot_password'))
         if not password:
             print("DEBUG: Validation failed: Password is missing")
             flash('New password is required.', 'danger')
-            return redirect(url_for('forgot_password'))
+            return redirect(url_for('core.forgot_password'))
         if not confirm_password:
             print("DEBUG: Validation failed: Confirm password is missing")
             flash('Confirm password is required.', 'danger')
-            return redirect(url_for('forgot_password'))
-        
+            return redirect(url_for('core.forgot_password'))
         if password != confirm_password:
             print("DEBUG: Validation failed: Passwords do not match")
             flash('Passwords do not match.', 'danger')
-            return redirect(url_for('forgot_password'))
-        
+            return redirect(url_for('core.forgot_password'))
         print("DEBUG: Input validation passed")
-        
-        # Step 2: Check if user exists
         user = User.query.filter_by(email=email).first()
         if not user:
             print(f"DEBUG: Validation failed: No user found with email {email}")
             flash('No account found with that email address.', 'danger')
-            return redirect(url_for('forgot_password'))
-        
+            return redirect(url_for('core.forgot_password'))
         print(f"DEBUG: User found - email: {user.email}, current password_hash: {user.password_hash}")
-        
-        # Step 3: Update password
         old_hash = user.password_hash
         try:
             print("DEBUG: Attempting to set new password")
-            user.set_password(password)  # Hash the new password
+            user.set_password(password)
             print(f"DEBUG: New password_hash generated: {user.password_hash}")
-            db.session.flush()  # Test session validity
+            db.session.flush()
             print("DEBUG: Session flush successful")
             db.session.commit()
             print(f"DEBUG: Database commit successful for {email}, old hash: {old_hash}, new hash: {user.password_hash}")
-            return redirect(url_for('change_password_successfully'))
+            return redirect(url_for('core.change_password_successfully'))
         except Exception as e:
             db.session.rollback()
             print(f"DEBUG: Database error during commit: {str(e)}")
             flash(f'Error updating password: {str(e)}', 'danger')
-            return redirect(url_for('forgot_password'))
-    
+            return redirect(url_for('core.forgot_password'))
     print("DEBUG: Rendering forgot_password.html for GET request")
     return render_template('forgot_password.html')
 
-@app.route('/change_password_successfully')
+@core.route('/change_password_successfully')
 def change_password_successfully():
     return render_template('change_password_successfully.html')
 
-@app.route('/login', methods=['GET','POST'])
+@core.route('/login', methods=['GET', 'POST'])
 def login():
     print(f"DEBUG: Received request: {request.method} {request.url}")
     if current_user.is_authenticated:
         print("DEBUG: User already authenticated, redirecting to dashboard")
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('core.dashboard'))
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
         pw = request.form.get('password')
         print(f"DEBUG: Attempting to log in user: {email}")
-        from sqlalchemy import func
         user = User.query.filter(func.lower(User.email) == email).first()
         if user:
             print(f"DEBUG: User found - email: {user.email}, password_hash: {user.password_hash}")
@@ -144,54 +131,47 @@ def login():
             login_user(user)
             print(f"DEBUG: User {email} logged in successfully")
             flash('Log in successful', 'success')
-            # Handle 'next' parameter for redirect
             next_page = request.args.get('next')
             from urllib.parse import urlparse, urljoin
-            # Check if next_page is safe to prevent open redirect
             if next_page and urlparse(next_page).netloc == '':
                 return redirect(next_page)
-            return redirect(url_for('dashboard'))
+            return redirect(url_for('core.dashboard'))
         else:
             flash('Invalid email or password', 'danger')
             print(f"DEBUG: Login failed for {email}")
-            return redirect(url_for('login'))
+            return redirect(url_for('core.login'))
     print("DEBUG: Rendering login.html")
     return render_template('login.html')
 
-@app.route('/logout')
+@core.route('/logout')
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('home'))
+    return redirect(url_for('core.home'))
 
-@app.route('/profile')
+@core.route('/profile')
 @login_required
 def profile():
-
     dob = current_user.dob
     dob_day = dob.day if dob else ''
     dob_month = dob.month if dob else ''
     dob_year = dob.year if dob else ''
     current_year = datetime.now().year
-
     return render_template(
         'profile.html',
         dob_day=dob_day,
         dob_month=dob_month,
         dob_year=dob_year,
         current_year=current_year,
-        user=current_user  # Optional but safe to include
+        user=current_user
     )
 
-
-
-@app.route('/update_profile', methods=['POST'])
+@core.route('/update_profile', methods=['POST'])
 @login_required
 def update_profile():
-    print(f"Received request: {request.method} {request.url}")  # Debug
-    print(f"Form data: {request.form}")  # Debug
-    print(f"Files: {request.files}")  # Debug
-
+    print(f"Received request: {request.method} {request.url}")
+    print(f"Form data: {request.form}")
+    print(f"Files: {request.files}")
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     username = request.form.get('username')
@@ -201,135 +181,98 @@ def update_profile():
     salary = request.form.get('salary')
     password = request.form.get('password')
     confirm_password = request.form.get('confirm_password')
-
-    print(f"Parsed form - first_name: {first_name}, last_name: {last_name}, username: {username}, dob: {dob}, email: {email}, company: {company}, salary: {salary}, password: {password}, confirm_password: {confirm_password}")  # Debug
-
+    print(f"Parsed form - first_name: {first_name}, last_name: {last_name}, username: {username}, dob: {dob}, email: {email}, company: {company}, salary: {salary}, password: {password}, confirm_password: {confirm_password}")
     if not first_name or not last_name or not username or not dob or not email:
-        print("Validation failed: Missing required fields")  # Debug
+        print("Validation failed: Missing required fields")
         return jsonify(error="All required fields must be filled."), 400
     if password and password != confirm_password:
-        print("Validation failed: Passwords do not match")  # Debug
+        print("Validation failed: Passwords do not match")
         return jsonify(error="Passwords do not match."), 400
     if User.query.filter_by(email=email).first() and email != current_user.email:
-        print(f"Validation failed: Email {email} already exists")  # Debug
+        print(f"Validation failed: Email {email} already exists")
         return jsonify(error="Email already registered."), 400
     if User.query.filter_by(username=username).first() and username != current_user.username:
-        print(f"Validation failed: Username {username} already exists")  # Debug
+        print(f"Validation failed: Username {username} already exists")
         return jsonify(error="Username already taken."), 400
-
     profile_pic = request.files.get('profile_image')
     if profile_pic and allowed_file(profile_pic.filename):
         filename = secure_filename(profile_pic.filename)
-    
-        # Make filename unique to avoid overwrite and caching
         import time
         unique_filename = f"{int(time.time())}_{filename}"
-    
-        upload_folder = app.config['UPLOAD_FOLDER']
+        upload_folder = current_app.config['UPLOAD_FOLDER']
+        print(f"UPLOAD_FOLDER: {upload_folder}")
         os.makedirs(upload_folder, exist_ok=True)
         file_path = os.path.join(upload_folder, unique_filename)
         profile_pic.save(file_path)
-    
         current_user.profile_pic = f'uploads/profile_pics/{unique_filename}'
-
-
-        print("Uploaded file saved at:", file_path)
-        print("Assigned profile_pic path:", current_user.profile_pic)
-
-        print(f"Profile picture saved: {file_path}")  # Debug
+        print(f"Profile picture saved: {file_path}")
     elif profile_pic:
-        print("Validation failed: Invalid file type")  # Debug
+        print("Validation failed: Invalid file type")
         return jsonify(error="Invalid file type. Allowed: jpg, jpeg, png, gif."), 400
-
     current_user.first_name = first_name
     current_user.last_name = last_name
     current_user.username = username
     try:
         current_user.dob = datetime.strptime(dob, '%Y-%m-%d').date() if dob else None
     except ValueError:
-        print("Validation failed: Invalid date format")  # Debug
+        print("Validation failed: Invalid date format")
         return jsonify(error="Invalid date format."), 400
     current_user.email = email
     current_user.company = company
     current_user.salary = float(salary) if salary else None
     if password:
         current_user.set_password(password)
-
     try:
         db.session.commit()
-        print("Profile updated and saved to database")  # Debug
-
+        print("Profile updated and saved to database")
         profile_pic_url = url_for('static', filename=current_user.profile_pic or 'img/default-user-icon.png')
-        
         print("PROFILE PIC URL:", profile_pic_url)
-
         return jsonify({
             "success": "Profile updated successfully!",
             "profile_pic_url": profile_pic_url,
             "username": current_user.username
         })
-
-
     except Exception as e:
         db.session.rollback()
-        print(f"Database error: {e}")  # Debug
+        print(f"Database error: {e}")
         return jsonify(error=f"Error updating profile: {str(e)}"), 500
 
-@app.route('/dashboard')
+@core.route('/dashboard')
 @login_required
 def dashboard():
-    # Get filter parameters
     category = request.args.get('category', 'All')
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
-
-    # Base query for user's expenses
     query = Expense.query.filter_by(user_id=current_user.id)
-
-    # Apply filters
     if category != 'All':
         query = query.filter_by(category=category)
     if start_date:
         query = query.filter(Expense.date >= datetime.strptime(start_date, '%Y-%m-%d').date())
     if end_date:
         query = query.filter(Expense.date <= datetime.strptime(end_date, '%Y-%m-%d').date())
-
-    # Get expenses in decreasing order by date
     expenses = query.order_by(Expense.date.desc()).all()
-
-    # Calculate KPIs
     total_spending = sum(e.amount for e in expenses) if expenses else 0
     num_transactions = len(expenses)
-    # Average spending
     if expenses:
-        first_date = expenses[-1].date    # Oldest
-        last_date = expenses[0].date    # Newest
+        first_date = expenses[-1].date
+        last_date = expenses[0].date
         num_months = (last_date.year - first_date.year) * 12 + (last_date.month - first_date.month) + 1
         avg_spending = total_spending / num_months if num_months > 0 else 0
     else:
         avg_spending = 0
-
-    # Count transactions per category
     category_counts = Counter(expense.category for expense in expenses)
-    # Get top 5 categories by transaction count
     top_category_counts = category_counts.most_common(5)
-
-    # Get categories and spending by category
     categories = db.session.query(Expense.category).filter_by(user_id=current_user.id).distinct().all()
     categories = [c[0] for c in categories]
     spending_by_category = []
     for cat in categories:
         cat_total = sum(e.amount for e in query.filter_by(category=cat).all())
         spending_by_category.append(cat_total)
-
-    # Get top category
     top_category = None
     if spending_by_category:
         max_spending = max(spending_by_category)
         if max_spending > 0:
             top_category = categories[spending_by_category.index(max_spending)]
-
-    # Get monthly spending for line chart
     monthly_data = (
         db.session.query(
             extract('year', Expense.date).label('year'),
@@ -343,26 +286,18 @@ def dashboard():
     )
     monthly_labels = [f"{int(m.year)}-{int(m.month):02d}" for m in monthly_data]
     monthly_spending = [float(m.total) for m in monthly_data]
-
-    # Daily trend data
     daily_trend = defaultdict(float)
     for expense in expenses:
-        day_key = expense.date.strftime('%Y-%m-%d')  # e.g., "2025-05-11"
+        day_key = expense.date.strftime('%Y-%m-%d')
         daily_trend[day_key] += expense.amount
-
-    # Sort by date
     sorted_days = sorted(daily_trend.keys())
     daily_labels = sorted_days
     daily_totals = [daily_trend[day] for day in sorted_days]
-
-    # Send raw data to JavaScript for filtering by date and category
     transactions = [{
         'category': e.category,
         'amount': e.amount,
-        'date': e.date.isoformat()  
+        'date': e.date.isoformat()
     } for e in expenses]
-
-
     return render_template(
         'dashboard.html',
         categories=categories,
@@ -372,31 +307,31 @@ def dashboard():
         top_category=top_category or "None",
         num_transactions=num_transactions,
         monthly_labels=monthly_labels,
-        monthly_spending=monthly_spending,      
+        monthly_spending=monthly_spending,
         top_category_counts=top_category_counts,
         daily_labels=daily_labels,
         daily_totals=daily_totals,
-        transactions=transactions 
+        transactions=transactions
     )
 
-@app.route('/records')
+@core.route('/records')
 @login_required
 def records():
     return render_template('records.html')
 
-@app.route('/share')
+@core.route('/share')
 @login_required
 def share():
     categories = db.session.query(Expense.category).filter_by(user_id=current_user.id).distinct().all()
     categories = [c[0] for c in categories]
     return render_template('share.html', categories=categories)
 
-@app.route('/share_history')
+@core.route('/share_history')
 @login_required
 def share_history():
     return render_template('share_history.html')
 
-@app.route('/get_records')
+@core.route('/get_records')
 @login_required
 def get_records():
     data = [{
@@ -407,9 +342,10 @@ def get_records():
     } for e in current_user.expenses.order_by(Expense.date.desc())]
     return jsonify(data)
 
-@app.route('/save_records', methods=['POST'])
-@login_required
+@core.route('/save_records', methods=['POST'])
 def save_records():
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Unauthorized'}), 401
     js = request.get_json()
     rid = js.get('record_id')
     if rid:
@@ -432,18 +368,18 @@ def save_records():
     db.session.commit()
     return jsonify(success=msg)
 
-@app.route('/delete_record', methods=['POST'])
+@core.route('/delete_record', methods=['POST'])
 @login_required
 def delete_record():
     rid = request.get_json().get('record_id')
-    e = Expense.query.get(rid)
+    e = db.session.get(Expense, rid)
     if not e or e.user_id != current_user.id:
         return jsonify(error='Not found'), 404
     db.session.delete(e)
     db.session.commit()
     return jsonify(success='Deleted Successfully')
 
-@app.route('/get_users', methods=['GET'])
+@core.route('/get_users', methods=['GET'])
 @login_required
 def get_users():
     users = User.query.filter(User.id != current_user.id).all()
@@ -452,18 +388,15 @@ def get_users():
         'name': user.username or f"{user.first_name} {user.last_name}"
     } for user in users])
 
-@app.route('/get_shareable_expenses', methods=['GET'])
+@core.route('/get_shareable_expenses', methods=['GET'])
 @login_required
 def get_shareable_expenses():
     query = Expense.query.filter_by(user_id=current_user.id)
-    
-    # Apply filters
     category = request.args.get('category')
     min_date = request.args.get('min_date')
     max_date = request.args.get('max_date')
     min_amount = request.args.get('min_amount')
     max_amount = request.args.get('max_amount')
-    
     if category:
         query = query.filter_by(category=category)
     if min_date:
@@ -474,7 +407,6 @@ def get_shareable_expenses():
         query = query.filter(Expense.amount >= float(min_amount))
     if max_amount:
         query = query.filter(Expense.amount <= float(max_amount))
-    
     expenses = query.order_by(Expense.date.desc()).all()
     return jsonify([{
         'id': e.id,
@@ -483,23 +415,20 @@ def get_shareable_expenses():
         'amount': e.amount
     } for e in expenses])
 
-@app.route('/share_expenses', methods=['POST'])
+@core.route('/share_expenses', methods=['POST'])
 @login_required
 def share_expenses():
     data = request.get_json()
     recipient_id = data.get('recipient_id')
     expense_ids = data.get('expense_ids')
-    
     if not recipient_id or not expense_ids:
         return jsonify(error='Recipient and expenses are required'), 400
-    
-    recipient = User.query.get(recipient_id)
+    recipient = db.session.get(User, recipient_id)
     if not recipient or recipient.id == current_user.id:
         return jsonify(error='Invalid recipient'), 400
-    
     shared_count = 0
     for expense_id in expense_ids:
-        expense = Expense.query.get(expense_id)
+        expense = db.session.get(Expense, expense_id)
         if expense and expense.user_id == current_user.id:
             shared_expense = SharedExpense(
                 sharer_id=current_user.id,
@@ -508,7 +437,6 @@ def share_expenses():
             )
             db.session.add(shared_expense)
             shared_count += 1
-    
     try:
         db.session.commit()
         return jsonify(success=f'Shared {shared_count} expenses successfully')
@@ -516,15 +444,14 @@ def share_expenses():
         db.session.rollback()
         return jsonify(error=f'Error sharing expenses: {str(e)}'), 500
 
-@app.route('/get_share_history', methods=['GET'])
+@core.route('/get_share_history', methods=['GET'])
 @login_required
 def get_share_history():
-    # My shared expenses
     my_shared = SharedExpense.query.filter_by(sharer_id=current_user.id).all()
     my_shared_data = []
     for s in my_shared:
         expense = Expense.query.get(s.expense_id)
-        if expense:  # Ensure expense exists
+        if expense:
             my_shared_data.append({
                 'shared_with': User.query.get(s.recipient_id).username or f"{User.query.get(s.recipient_id).first_name} {User.query.get(s.recipient_id).last_name}".strip(),
                 'date': s.shared_date.isoformat(),
@@ -534,13 +461,11 @@ def get_share_history():
                     'date': expense.date.isoformat()
                 }]
             })
-
-    # Expenses shared with me
     shared_with_me = SharedExpense.query.filter_by(recipient_id=current_user.id).all()
     shared_with_me_data = []
     for s in shared_with_me:
         expense = Expense.query.get(s.expense_id)
-        if expense:  # Ensure expense exists
+        if expense:
             shared_with_me_data.append({
                 'shared_by': User.query.get(s.sharer_id).username or f"{User.query.get(s.sharer_id).first_name} {User.query.get(s.sharer_id).last_name}".strip(),
                 'date': s.shared_date.isoformat(),
@@ -550,12 +475,11 @@ def get_share_history():
                     'date': expense.date.isoformat()
                 }]
             })
-
     return jsonify({
         'my_shared': my_shared_data,
         'shared_with_me': shared_with_me_data
     })
 
-@app.errorhandler(404)
+@core.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
