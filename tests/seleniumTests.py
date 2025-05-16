@@ -211,6 +211,39 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         # Wait briefly to see if alert appears
         self.wait.until(EC.url_contains("/login"))
         self.assertIn("/login", self.driver.current_url)
+    
+    def test_login_invalid_email(self):
+        # NOTE: This form uses HTML5 email format validation.
+        # If the email format is invalid, the form is not submitted and no request is sent to the server.
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.NAME, "email").send_keys("invalid_email@domain")  # invalid email
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        
+        # Wait briefly to see if alert appears
+        self.wait.until(EC.url_contains("/login"))
+        self.assertEqual(self.driver.current_url, current_url)
+    
+    def test_login_invalid_email_not_registered(self):
+        # NOTE: This form uses HTML5 email format validation.
+        # If the email format is invalid, the form is not submitted and no request is sent to the server.
+
+        email = self._unique_email()
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)  # invalid email
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        
+        # Wait briefly to see if alert appears
+        self.wait.until(EC.url_contains("/login"))
+        self.assertIn("/login", self.driver.current_url)
+
 
     def test_login_invalid_email_format(self):
         # NOTE: This form uses HTML5 email format validation.
