@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from flask import Flask, url_for
 from flask_testing import TestCase
-from bs4 import BeautifulSoup
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
