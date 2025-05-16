@@ -14,6 +14,28 @@ The system is built with a modular design using **Flask** (Python), **SQLite**, 
 
 ---
 
+## External Libraries and Attribution
+
+This project uses the following external libraries and resources:
+
+- **SB Admin 2 Bootstrap Template**  
+  - **Source:** [SB Admin 2 by Start Bootstrap](https://startbootstrap.com/theme/sb-admin-2)    
+  - **Usage:** Used a customised version of this as the base layout and styling framework for our Flask web interface. HTML, CSS, and JS assets were adapted to suit our project needs.
+
+- **Chart.js**  
+  - **Source:** [Chart.js](https://www.chartjs.org/)    
+  - **Usage:**  Used for rendering dynamic charts and visualizations in the dashboard.
+
+- **DataTables jQuery Plugin**  
+  - **Source:** [DataTables](https://datatables.net/)   
+  - **Usage:** Integrated for enhanced table features like pagination, and live searching in the records tables.
+
+- **Flask & Python Packages**  
+  - **Source:** Listed in `requirements.txt`  
+  - **Usage:** All third-party Python libraries (e.g., Flask, pandas) were installed via pip and are necessary to run the backend logic of the project.
+
+---
+
 ## 👥 Masters_gc_Group_gc_6: Group Members 
 
 | UWA ID       | Name                           | GitHub Username      |
