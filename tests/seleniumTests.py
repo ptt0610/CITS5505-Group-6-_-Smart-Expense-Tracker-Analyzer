@@ -326,7 +326,51 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         alert.accept()
 
 
+    # Records Tests
+    def test_valid_record_submission_shows_success_alert(self):
+        email = self._unique_email()
 
+        # Register and login
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Valid"), ("last_name", "AlertTest"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/dashboard"))
+
+        # Go to Records page
+        self.driver.find_element(By.LINK_TEXT, "Records").click()
+        self.wait.until(EC.url_contains("/records"))
+
+        # Expand form (click twice in case it was toggled closed)
+        header = self.driver.find_element(By.CLASS_NAME, "pane-header")
+        header.click()
+        self.wait.until(EC.visibility_of_element_located((By.ID, "expandableContent")))
+        try:
+            # Double-check interaction readiness
+            WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.ID, "amount")))
+            self.driver.find_element(By.ID, "amount").clear()
+            self.driver.find_element(By.ID, "amount").send_keys("22")
+        except:
+            header.click()  # retry expand
+            self.wait.until(EC.element_to_be_clickable((By.ID, "amount")))
+            self.driver.find_element(By.ID, "amount").clear()
+            self.driver.find_element(By.ID, "amount").send_keys("22")
+
+        Select(self.driver.find_element(By.ID, "category")).select_by_visible_text("Personal Care")
+        self.driver.find_element(By.ID, "date").send_keys("2025-05-10")
+        self.driver.find_element(By.ID, "saveBtn").click()
+
+        # Assert alert text
+        WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert
+        self.assertIn("Saved Successfully", alert.text)
+        alert.accept()
 
 
     
