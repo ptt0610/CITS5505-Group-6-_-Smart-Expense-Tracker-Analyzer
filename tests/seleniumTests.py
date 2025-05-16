@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 
 BASE_URL = "http://127.0.0.1:5000" 
 
@@ -29,7 +30,8 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         except Exception:
             return ""
 
-    # Signup 
+    
+    # Signup Tests
     def test_signup_success(self):
         email = self._unique_email()
         self.driver.get(f"{BASE_URL}/signup")
@@ -167,7 +169,8 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.wait.until(EC.url_contains("/signup"))
         self.assertEqual(self.driver.current_url, current_url)
 
-    # Login 
+    
+    # Login Tests
     def test_login_success(self):
         email = self._unique_email()
 
@@ -211,6 +214,39 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         # Wait briefly to see if alert appears
         self.wait.until(EC.url_contains("/login"))
         self.assertIn("/login", self.driver.current_url)
+    
+    def test_login_invalid_email(self):
+        # NOTE: This form uses HTML5 email format validation.
+        # If the email format is invalid, the form is not submitted and no request is sent to the server.
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.NAME, "email").send_keys("invalid_email@domain")  # invalid email
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        
+        # Wait briefly to see if alert appears
+        self.wait.until(EC.url_contains("/login"))
+        self.assertEqual(self.driver.current_url, current_url)
+    
+    def test_login_invalid_email_not_registered(self):
+        # NOTE: This form uses HTML5 email format validation.
+        # If the email format is invalid, the form is not submitted and no request is sent to the server.
+
+        email = self._unique_email()
+
+        self.driver.get(f"{BASE_URL}/login")
+        current_url = self.driver.current_url
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)  # invalid email
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        
+        # Wait briefly to see if alert appears
+        self.wait.until(EC.url_contains("/login"))
+        self.assertIn("/login", self.driver.current_url)
+
 
     def test_login_invalid_email_format(self):
         # NOTE: This form uses HTML5 email format validation.
@@ -238,6 +274,106 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.wait.until(EC.url_contains("/login"))
         self.assertEqual(self.driver.current_url, current_url)
 
+
+
+    #Dashboard Tests
+    def test_dashboard_view(self):
+        email = self._unique_email()
+
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Dashboard"), ("last_name", "User"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        try:
+            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        except:
+            pass
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+
+        self.wait.until(EC.url_contains("/dashboard"))
+        self.assertIn("/dashboard", self.driver.current_url)
+        self.assertIn("dashboard", self.driver.page_source.lower())
+    
+    def test_dashboard_invalid_date_range_alert(self):
+        """Show alert when end date is earlier than start date in dashboard filter."""
+        email = self._unique_email()
+
+        # Register and login
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Invalid"), ("last_name", "DateTest"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/dashboard"))
+
+        # Set startDate > endDate
+        self.driver.find_element(By.ID, "startDate").send_keys("06/04/2025")  # June 4, 2025
+        self.driver.find_element(By.ID, "endDate").send_keys("05/05/2025")    # May 5, 2025
+        self.driver.find_element(By.XPATH, "//button[contains(text(), 'Apply Filters')]").click()
+
+        # Handle and verify alert
+        alert = self.wait.until(EC.alert_is_present())
+        self.assertIn("end date cannot be earlier", alert.text.lower())
+        alert.accept()
+
+
+    # Records Tests
+    def test_valid_record_submission_shows_success_alert(self):
+        email = self._unique_email()
+
+        # Register and login
+        self.driver.get(f"{BASE_URL}/signup")
+        for name, val in [("first_name", "Valid"), ("last_name", "AlertTest"), ("email", email), ("password", "MyPass1!")]:
+            self.driver.find_element(By.NAME, name).send_keys(val)
+        self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/login"))
+
+        self.driver.find_element(By.NAME, "email").send_keys(email)
+        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
+        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        self.wait.until(EC.url_contains("/dashboard"))
+
+        # Go to Records page
+        self.driver.find_element(By.LINK_TEXT, "Records").click()
+        self.wait.until(EC.url_contains("/records"))
+
+        # Expand form (click twice in case it was toggled closed)
+        header = self.driver.find_element(By.CLASS_NAME, "pane-header")
+        header.click()
+        self.wait.until(EC.visibility_of_element_located((By.ID, "expandableContent")))
+        try:
+            # Double-check interaction readiness
+            WebDriverWait(self.driver, 3).until(EC.element_to_be_clickable((By.ID, "amount")))
+            self.driver.find_element(By.ID, "amount").clear()
+            self.driver.find_element(By.ID, "amount").send_keys("22")
+        except:
+            header.click()  # retry expand
+            self.wait.until(EC.element_to_be_clickable((By.ID, "amount")))
+            self.driver.find_element(By.ID, "amount").clear()
+            self.driver.find_element(By.ID, "amount").send_keys("22")
+
+        Select(self.driver.find_element(By.ID, "category")).select_by_visible_text("Personal Care")
+        self.driver.find_element(By.ID, "date").send_keys("2025-05-10")
+        self.driver.find_element(By.ID, "saveBtn").click()
+
+        # Assert alert text
+        WebDriverWait(self.driver, 5).until(EC.alert_is_present())
+        alert = self.driver.switch_to.alert
+        self.assertIn("Saved Successfully", alert.text)
+        alert.accept()
+
+
+    
 if __name__ == "__main__":
     unittest.main()
 
