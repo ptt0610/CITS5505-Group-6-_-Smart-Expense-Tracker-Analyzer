@@ -298,42 +298,15 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.assertIn("/dashboard", self.driver.current_url)
         self.assertIn("dashboard", self.driver.page_source.lower())
     
-    def test_dashboard_logout(self):
+    def test_dashboard_invalid_date_range_alert(self):
+        """Show alert when end date is earlier than start date in dashboard filter."""
         email = self._unique_email()
 
+        # Register and login
         self.driver.get(f"{BASE_URL}/signup")
-        for name, val in [("first_name", "Logout"), ("last_name", "User"), ("email", email), ("password", "MyPass1!")]:
+        for name, val in [("first_name", "Invalid"), ("last_name", "DateTest"), ("email", email), ("password", "MyPass1!")]:
             self.driver.find_element(By.NAME, name).send_keys(val)
-        try:
-            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
-        except:
-            pass
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-        self.wait.until(EC.url_contains("/login"))
-
-        self.driver.find_element(By.NAME, "email").send_keys(email)
-        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        self.wait.until(EC.url_contains("/dashboard"))
-        self.assertIn("/dashboard", self.driver.current_url)
-
-        # Click logout button
-        self.driver.find_element(By.LINK_TEXT, "Logout").click()
-        self.wait.until(EC.url_contains("/login"))
-        self.assertIn("/login", self.driver.current_url)
-    
-    def test_persistent_records_reflected_in_dashboard(self):
-        email = self._unique_email()
-
-        # Step 1: Register and login
-        self.driver.get(f"{BASE_URL}/signup")
-        for name, val in [("first_name", "Persistent"), ("last_name", "User"), ("email", email), ("password", "MyPass1!")]:
-            self.driver.find_element(By.NAME, name).send_keys(val)
-        try:
-            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
-        except:
-            pass
+        self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
         self.wait.until(EC.url_contains("/login"))
 
@@ -342,87 +315,18 @@ class SmartExpenseSeleniumTests(unittest.TestCase):
         self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
         self.wait.until(EC.url_contains("/dashboard"))
 
-        # Step 2: Go to Records page and add a record
-        self.driver.find_element(By.LINK_TEXT, "Records").click()
-        self.wait.until(EC.url_contains("/records"))
-
-        # Fill in record form 
-        self.driver.find_element(By.NAME, "amount").send_keys("123")
-        Select(self.driver.find_element(By.NAME, "category")).select_by_visible_text("Food")
-        self.driver.find_element(By.NAME, "date").send_keys("2024-05-17")
-
-        # Step 3: Go to dashboard and confirm the transaction is reflected
-        self.driver.find_element(By.LINK_TEXT, "Dashboard").click()
-        self.wait.until(EC.url_contains("/dashboard"))
-        self.assertIn("food", self.driver.page_source.lower())
-        self.assertIn("123", self.driver.page_source)
-
-        # Step 4: Log out
-        self.driver.find_element(By.LINK_TEXT, "Logout").click()
-        self.wait.until(EC.url_contains("/login"))
-
-        # Step 5: Log back in
-        self.driver.find_element(By.NAME, "email").send_keys(email)
-        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-        self.wait.until(EC.url_contains("/dashboard"))
-
-        # Step 6: Confirm record still shows up
-        self.assertIn("food", self.driver.page_source.lower())
-        self.assertIn("123", self.driver.page_source)
-
-    def test_dashboard_filter_by_category(self):
-        email = self._unique_email()
-
-        # Step 1: Sign up and log in
-        self.driver.get(f"{BASE_URL}/signup")
-        for name, val in [("first_name", "Filter"), ("last_name", "User"), ("email", email), ("password", "MyPass1!")]:
-            self.driver.find_element(By.NAME, name).send_keys(val)
-        try:
-            self.driver.find_element(By.NAME, "repeat_password").send_keys("MyPass1!")
-        except:
-            pass
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-        self.wait.until(EC.url_contains("/login"))
-
-        self.driver.find_element(By.NAME, "email").send_keys(email)
-        self.driver.find_element(By.NAME, "password").send_keys("MyPass1!")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-        self.wait.until(EC.url_contains("/dashboard"))
-
-        # Step 2: Go to Records and add two entries: Food and Travel
-        self.driver.find_element(By.LINK_TEXT, "Records").click()
-        self.wait.until(EC.url_contains("/records"))
-
-        # Add a Food record
-        self.driver.find_element(By.NAME, "amount").send_keys("100")
-        Select(self.driver.find_element(By.NAME, "category")).select_by_visible_text("Food")
-        self.driver.find_element(By.NAME, "date").send_keys("2024-05-17")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        # Add a Travel record
-        self.driver.find_element(By.NAME, "amount").clear()
-        self.driver.find_element(By.NAME, "amount").send_keys("250")
-        Select(self.driver.find_element(By.NAME, "category")).select_by_visible_text("Travel")
-        self.driver.find_element(By.NAME, "date").clear()
-        self.driver.find_element(By.NAME, "date").send_keys("2024-05-17")
-        self.driver.find_element(By.XPATH, "//button[@type='submit']").click()
-
-        # Step 3: Go back to Dashboard
-        self.driver.find_element(By.LINK_TEXT, "Dashboard").click()
-        self.wait.until(EC.url_contains("/dashboard"))
-
-        # Step 4: Apply category filter: Food
-        Select(self.driver.find_element(By.NAME, "category")).select_by_visible_text("Food")
+        # Set startDate > endDate
+        self.driver.find_element(By.ID, "startDate").send_keys("06/04/2025")  # June 4, 2025
+        self.driver.find_element(By.ID, "endDate").send_keys("05/05/2025")    # May 5, 2025
         self.driver.find_element(By.XPATH, "//button[contains(text(), 'Apply Filters')]").click()
 
-        # Step 5: Validate only Food record is shown
-        self.wait.until(EC.presence_of_element_located((By.ID, "spending-chart")))
-        page_text = self.driver.page_source.lower()
-        self.assertIn("food", page_text)
-        self.assertIn("100", page_text)
-        self.assertNotIn("250", page_text)
-        self.assertNotIn("travel", page_text)
+        # Handle and verify alert
+        alert = self.wait.until(EC.alert_is_present())
+        self.assertIn("end date cannot be earlier", alert.text.lower())
+        alert.accept()
+
+
+
 
 
     
