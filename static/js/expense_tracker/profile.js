@@ -5,10 +5,28 @@ document.addEventListener("DOMContentLoaded", function () {
     const navProfilePic = document.getElementById("nav-profile-pic");
     const confirmation = document.getElementById("confirmation");
     const errorDiv = document.getElementById("error");
-
     const daySelect = document.getElementById("dob-day");
     const monthSelect = document.getElementById("dob-month");
     const yearSelect = document.getElementById("dob-year");
+    const emailInput = document.getElementById("email");
+    const emailError = document.getElementById("email-error");
+
+    
+    if (emailInput && emailError) {
+        emailInput.addEventListener("blur", function () {
+            const email = emailInput.value.trim();
+            if (!isValidEmail(email)) {
+                emailError.textContent = "Please enter a valid email address.";
+                emailError.style.display = "block";
+                emailInput.focus();
+                return;
+            } else {
+                emailError.textContent = "";
+                emailError.style.display = "none";
+            }
+        });
+    }
+
 
     // Live preview of uploaded image
     if (profileImageInput && profilePreview) {
@@ -72,6 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    // Email validation
+    function isValidEmail(email) {
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+}
+
+
     // Password validation
     function isValidPassword(password) {
         const lengthCheck = /.{8,}/;
@@ -92,6 +117,12 @@ document.addEventListener("DOMContentLoaded", function () {
     profileForm.addEventListener("submit", function (e) {
         e.preventDefault();
         errorDiv.style.display = "none";
+        
+        const email = document.getElementById("email").value.trim();
+        if (!isValidEmail(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
 
         const day = daySelect.value;
         const month = monthSelect.value;
@@ -168,6 +199,7 @@ document.addEventListener("DOMContentLoaded", function () {
             errorDiv.style.display = "block";
         });
     });
+
     // Show/hide password toggle
     document.querySelectorAll(".toggle-password").forEach(function (icon) {
         icon.addEventListener("click", function () {

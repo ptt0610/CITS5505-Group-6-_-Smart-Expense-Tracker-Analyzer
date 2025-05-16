@@ -21,10 +21,23 @@ $(function () {
 });
 
 
+// Client-side validation for the email input
+function isEmailValid(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
 // Client-side validation for the password reset form
 document.querySelector("form").addEventListener("submit", function (event) {
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
     const confirmPassword = document.getElementById("confirm_password").value.trim();
+
+    if (!isEmailValid(email)) {
+        event.preventDefault();
+        alert("Please enter a valid email address.");
+        return;
+    }
 
     if (password !== confirmPassword) {
         event.preventDefault();
