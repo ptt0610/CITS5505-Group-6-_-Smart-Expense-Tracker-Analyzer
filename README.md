@@ -133,6 +133,12 @@ Follow these simple steps to get started with the Smart Expense Tracker & Analyz
 
 This project uses Unit Testing for testing the backend logic and System Testing for testing the full user experience in the browser.
 
+### 🧪 Unit Tests
+
+The Unit Tests validate the core backend functionality, including user authentication, expense processing, and data validation in routes.py. They mock dependencies like database interactions and external APIs (e.g., email validation) to isolate and test individual functions without relying on the Flask server or real data. This ensures robust testing of business logic, such as signup, login, and profile updates, in a controlled environment.
+
+``python -m unittest tests/test_app.py``
+
 ### 🧪 Selenium Tests
 
 The System testing is done through **end-to-end Selenium tests**, that will simulate real user interactions to verify key flows such as signup, login, form validation, page redirection, dashboard filtering, record management, sharing, and profile updates.
