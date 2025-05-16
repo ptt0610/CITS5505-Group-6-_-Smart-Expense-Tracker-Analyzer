@@ -64,15 +64,15 @@ To launch the application locally:
     ``source venv/bin/activate``
 
     for windows users:
-    ``venv\Scripts\activate.bat``
+    ``venv\Scripts\activate``
 
     for powershell:
-    ``venv\Scripts\Activate.ps1``
+    ``venv\Scripts\Activate``
 
 4. Install dependencies
     ``pip install -r requirements.txt``
 
-5. Run ``app.py`` and copy the IP address to a browser to run the app
+5. Run ``python app.py`` and copy the IP address to a browser to run the app
 
 6. (Optional) Initiate the database and migration folder- in case you want to create a new database different from the remaining one
    - Activate virtual environment
@@ -154,6 +154,9 @@ Follow these simple steps to get started with the Smart Expense Tracker & Analyz
 ## 🧪 Running the Tests
 
 This project uses Unit Testing for testing the backend logic and System Testing for testing the full user experience in the browser.
+> 💡 **Note:** Before running the tests, make sure:
+> - The Flask application is running ( ``python app.py`` )
+> - In a different terminal where you run the tests, Python virtual environment is activated ( ``venv\Scripts\activate`` )
 
 ### 🧪 Unit Tests
 
@@ -168,6 +171,5 @@ The System testing is done through **end-to-end Selenium tests**, that will simu
 
 To run the tests:
 
-```bash
-python -m unittest tests/seleniumTests.py
+``python -m unittest tests/seleniumTests.py``
 
