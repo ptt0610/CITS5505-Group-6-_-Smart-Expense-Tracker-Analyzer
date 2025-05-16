@@ -80,7 +80,7 @@ To launch the application locally:
    - ``flask db migrate -m "Recreate migration for User, Expense, SharedExpense"``
    - ``flask db upgrade``
 
-7. You can use Sqlite Studio to view app.db and check all data with:
+7. (Optional) You can use Sqlite Studio to view app.db and check all data with:
    ``SELECT * from user;``
    ``SELECT * from expense;`` 
 
