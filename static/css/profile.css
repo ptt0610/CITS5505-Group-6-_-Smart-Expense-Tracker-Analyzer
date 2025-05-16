@@ -62,5 +62,11 @@ body {
   gap: 10px;
 }
 
+/* Error message styling*/
+.error-message {
+    font-size: 0.9em;
+    margin-top: 4px;
+    color: crimson;
+}
 
 
