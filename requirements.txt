@@ -10,3 +10,4 @@ pytest
 pytest-mock
 pytest-flask
 email-validator
+flask-testing
