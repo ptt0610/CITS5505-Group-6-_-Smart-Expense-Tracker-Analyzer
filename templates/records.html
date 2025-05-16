@@ -39,7 +39,7 @@
           <button id="saveBtn" class="btn btn-primary btn-block">Save Expense</button>
           <hr>
           <div class="text-center">
-            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+            <a href="{{ url_for('core.dashboard') }}">Back to Dashboard</a>
           </div>
         </div>
       </div>
@@ -109,8 +109,8 @@
 
   <!-- Pass URLs as data attributes -->
 <script>
-  $('#dataTable').data('url', "{{ url_for('get_records') }}");
-  $('#dataTable').data('delete-url', "{{ url_for('delete_record') }}");
-  $('#saveBtn').data('url', "{{ url_for('save_records') }}");
+  $('#dataTable').data('url', "{{ url_for('core.get_records') }}");
+  $('#dataTable').data('delete-url', "{{ url_for('core.delete_record') }}");
+  $('#saveBtn').data('url', "{{ url_for('core.save_records') }}");
 </script>
 {% endblock %}

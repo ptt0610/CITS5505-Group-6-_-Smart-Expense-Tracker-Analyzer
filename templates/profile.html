@@ -10,7 +10,7 @@
 {% block content %}
 <h1 class="h3 mb-4 text-gray-800">Profile Settings</h1>
 
-<form id="profile-form" enctype="multipart/form-data" method="POST" action="{{ url_for('update_profile') }}">
+<form id="profile-form" enctype="multipart/form-data" method="POST" action="{{ url_for('core.update_profile') }}">
     <div class="row">
         <!-- Form Column -->
         <div class="col-lg-8">
@@ -60,8 +60,8 @@
 
                     <div class="form-group">
                         <label for="email">Email ID <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" id="email" name="email"
-                            placeholder="Enter your email" value="{{ current_user.email or '' }}" required>
+                        <input type="email" class="form-control" id="email" name="email
+                               placeholder="Enter your email" value="{{ current_user.email or '' }}" required>
                         <div id="email-error" class="error-message" style="color: red; display: none;"></div>
                     </div>
 
@@ -81,7 +81,7 @@
                         <label for="password">New Password <span class="text-danger">*</span></label>
 
                         <small class="form-text text-muted" title="Password must be at least 8 characters long and include one uppercase letter, one number, and one special character.">
-                            <i class="fas fa-info-circle"></i> At least 8 characters, 1 uppercase letter, 1 number, and 1 special character.
+                            <i class="fas fa-info-circle"></i> Password must meet complexity requirements.
                         </small>
                         
                         <div class="position-relative">
