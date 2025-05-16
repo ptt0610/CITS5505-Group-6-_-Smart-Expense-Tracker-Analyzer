@@ -5,3 +5,8 @@ Flask-Migrate
 Flask-Login
 Werkzeug
 selenium
+requests
+pytest
+pytest-mock
+pytest-flask
+email-validator
